@@ -1,0 +1,5 @@
+********************************************** stata.toc
+v 3
+d CERES - IESP - UERJ
+d 
+p classes_pnad [Programa para gerar classificações ocupacionais nas PNADS]
