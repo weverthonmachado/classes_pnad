@@ -3,7 +3,7 @@
 
 /// Weverthon Machado
 
-Versão 0.9
+Versão 0.9.1
 Última alteração: 20/03/2016
 ---------------------------------------------------------------------*/
 capture program drop classes_pnad
@@ -35,7 +35,8 @@ if "`namelist'" != "" {
 		if `: list `x' in validos'{
 		}
 		else {
-			di "Erro: ``x'' não é uma classificação válida."
+			di as error "Erro: '``x''' não é uma classificação válida."
+			exit
 		}
 	} 
 
@@ -50,36 +51,38 @@ if "`namelist'" != "" {
 }
 
 
-
 * Dando conta de letras maiusculas e minusculas
-if `ano'>1990 {
+if `ano'>1990 & `ano'<2002{
 	capture confirm variable v9906, exact
 	if _rc!=0 {
 		capture confirm variable V9906, exact
 		if _rc==0 {
-			local v9906 V9906
+			local ocupacao V9906
 		}
 	} 
 	else {
-		local v9906 v9906
+		local ocupacao v9906
 	}
 }
 
 if `ano'>2001 {
-	capture confirm variable v9907 v4706 v4808 v4809, exact
+	capture confirm variable v9906 v9907 v4706 v4808 v4809, exact
 	if _rc!=0 {
-		capture confirm variable V9907 V4706 V4808 V4809, exact
+		capture confirm variable V9906 V9907 V4706 V4808 V4809, exact
 		if _rc==0 {
+			local v9906 V9906
 			local v9907 V9907
 			local v4706 V4706
 			local v4808 V4808
 			local v4809 V4809
 		}
 		else {
-			di "Erro: Variáveis auxiliares não encontradas. Verifique o ano da pesquisa."
+			di as error "Erro: Variáveis auxiliares não encontradas. Verifique o ano da pesquisa."
+			exit
 		}
 	} 
 	else {
+			local v9906 v9906
 			local v9907 v9907
 			local v4706 v4706
 			local v4808 v4808
@@ -89,7 +92,7 @@ if `ano'>2001 {
 
 
 *********************************************************************
-* 1 - Pós-2002
+* 1 - Conversão para CBO-Domiciliar
 *********************************************************************
 
 if `ano'>2001 {
@@ -773,435 +776,453 @@ if `ano'>2001 {
 	replace `ibge90' = 272 if `v9906' == 2625 & `v9907' == 20000
 	replace `ibge90' = 272 if `v9906' == 2625 & `v9907' == 26091
 	replace `ibge90' = 303 if `v9906' == 7825 & `v4808' == 1 & `v9907' < 1402
+	
 
 	/*--------------------------------------------------------------------
-	- 1.3 EGP
+	- 1.3 - Local ocupacao
 	---------------------------------------------------------------------*/
+	tempvar ocupacao
+	gen `ocupacao'= `ibge90'
 
-	if "`egp12'" != ""  |  "`egp7'" != "" |  "`egp'" != ""{
-
-		noisily di "Criando classes EGP..."		
-		gen egp12=.
-		lab var egp12 "EGP com 12 classes"
-
-		replace egp12 = 10 if `ibge90' == 20
-		replace egp12 = 10 if `ibge90' == 21
-		replace egp12 = 10 if `ibge90' == 33
-		replace egp12 = 10 if `ibge90' == 38
-		replace egp12 = 10 if `ibge90' == 101
-		replace egp12 = 10 if `ibge90' == 102
-		replace egp12 = 10 if `ibge90' == 121
-		replace egp12 = 10 if `ibge90' == 122
-		replace egp12 = 10 if `ibge90' == 123
-		replace egp12 = 10 if `ibge90' == 124
-		replace egp12 = 10 if `ibge90' == 141
-		replace egp12 = 10 if `ibge90' == 142
-		replace egp12 = 10 if `ibge90' == 143
-		replace egp12 = 10 if `ibge90' == 144
-		replace egp12 = 10 if `ibge90' == 151
-		replace egp12 = 10 if `ibge90' == 152
-		replace egp12 = 10 if `ibge90' == 171
-		replace egp12 = 10 if `ibge90' == 181
-		replace egp12 = 10 if `ibge90' == 183
-		replace egp12 = 10 if `ibge90' == 201
-		replace egp12 = 10 if `ibge90' == 202
-		replace egp12 = 10 if `ibge90' == 203
-		replace egp12 = 10 if `ibge90' == 205
-		replace egp12 = 10 if `ibge90' == 211
-		replace egp12 = 10 if `ibge90' == 212
-		replace egp12 = 10 if `ibge90' == 231
-		replace egp12 = 10 if `ibge90' == 232
-		replace egp12 = 10 if `ibge90' == 233
-		replace egp12 = 10 if `ibge90' == 292
-		replace egp12 = 10 if `ibge90' == 711
-
-		replace egp12 = 20 if `ibge90' == 32
-		replace egp12 = 20 if `ibge90' == 34
-		replace egp12 = 20 if `ibge90' == 35
-		replace egp12 = 20 if `ibge90' == 36
-		replace egp12 = 20 if `ibge90' == 37
-		replace egp12 = 20 if `ibge90' == 39
-		replace egp12 = 20 if `ibge90' == 40
-		replace egp12 = 20 if `ibge90' == 50
-		replace egp12 = 20 if `ibge90' == 52
-		replace egp12 = 20 if `ibge90' == 153
-		replace egp12 = 20 if `ibge90' == 154
-		replace egp12 = 20 if `ibge90' == 182
-		replace egp12 = 20 if `ibge90' == 204
-		replace egp12 = 20 if `ibge90' == 213
-		replace egp12 = 20 if `ibge90' == 241
-		replace egp12 = 20 if `ibge90' == 252
-		replace egp12 = 20 if `ibge90' == 291
-		replace egp12 = 20 if `ibge90' == 641
-		replace egp12 = 20 if `ibge90' == 643
-		replace egp12 = 20 if `ibge90' == 644
-		replace egp12 = 20 if `ibge90' == 721
-
-		replace egp12 = 31 if `ibge90' == 54
-		replace egp12 = 31 if `ibge90' == 55
-		replace egp12 = 31 if `ibge90' == 56
-		replace egp12 = 31 if `ibge90' == 57
-		replace egp12 = 31 if `ibge90' == 58
-		replace egp12 = 31 if `ibge90' == 59
-		replace egp12 = 31 if `ibge90' == 60
-		replace egp12 = 31 if `ibge90' == 61
-		replace egp12 = 31 if `ibge90' == 62
-		replace egp12 = 31 if `ibge90' == 64
-		replace egp12 = 31 if `ibge90' == 191
-		replace egp12 = 31 if `ibge90' == 192
-		replace egp12 = 31 if `ibge90' == 193
-		replace egp12 = 31 if `ibge90' == 194
-		replace egp12 = 31 if `ibge90' == 214
-		replace egp12 = 31 if `ibge90' == 215
-		replace egp12 = 31 if `ibge90' == 216
-		replace egp12 = 31 if `ibge90' == 217
-		replace egp12 = 31 if `ibge90' == 218
-		replace egp12 = 31 if `ibge90' == 219
-		replace egp12 = 31 if `ibge90' == 221
-		replace egp12 = 31 if `ibge90' == 222
-		replace egp12 = 31 if `ibge90' == 242
-		replace egp12 = 31 if `ibge90' == 243
-		replace egp12 = 31 if `ibge90' == 244
-		replace egp12 = 31 if `ibge90' == 251
-		replace egp12 = 31 if `ibge90' == 261
-		replace egp12 = 31 if `ibge90' == 275
-		replace egp12 = 31 if `ibge90' == 276
-		replace egp12 = 31 if `ibge90' == 277
-		replace egp12 = 31 if `ibge90' == 278
-		replace egp12 = 31 if `ibge90' == 279
-		replace egp12 = 31 if `ibge90' == 631
-		replace egp12 = 31 if `ibge90' == 632
-		replace egp12 = 31 if `ibge90' == 633
-		replace egp12 = 31 if `ibge90' == 642
-		replace egp12 = 31 if `ibge90' == 645
-		replace egp12 = 31 if `ibge90' == 831
-		replace egp12 = 31 if `ibge90' == 832
-		replace egp12 = 31 if `ibge90' == 833
-		replace egp12 = 31 if `ibge90' == 834
-		replace egp12 = 31 if `ibge90' == 863
-		replace egp12 = 31 if `ibge90' == 864
-		replace egp12 = 31 if `ibge90' == 865
-
-		replace egp12 = 32 if `ibge90' == 53
-		replace egp12 = 32 if `ibge90' == 63
-		replace egp12 = 32 if `ibge90' == 132
-		replace egp12 = 32 if `ibge90' == 162
-		replace egp12 = 32 if `ibge90' == 163
-		replace egp12 = 32 if `ibge90' == 602
-		replace egp12 = 32 if `ibge90' == 603
-		replace egp12 = 32 if `ibge90' == 604
-		replace egp12 = 32 if `ibge90' == 605
-		replace egp12 = 32 if `ibge90' == 646
-		replace egp12 = 32 if `ibge90' == 712
-		replace egp12 = 32 if `ibge90' == 771
-		replace egp12 = 32 if `ibge90' == 772
-		replace egp12 = 32 if `ibge90' == 773
-		replace egp12 = 32 if `ibge90' == 774
-		replace egp12 = 32 if `ibge90' == 814
-		replace egp12 = 32 if `ibge90' == 815
-		replace egp12 = 32 if `ibge90' == 816
-		replace egp12 = 32 if `ibge90' == 817
-		replace egp12 = 32 if `ibge90' == 818
-		replace egp12 = 32 if `ibge90' == 845
-		replace egp12 = 32 if `ibge90' == 869
-		replace egp12 = 32 if `ibge90' == 911
-		replace egp12 = 32 if `ibge90' == 912
-
-		replace egp12 = 41 if `ibge90' == 7
-		replace egp12 = 41 if `ibge90' == 8
-		replace egp12 = 41 if `ibge90' == 9
-		replace egp12 = 41 if `ibge90' == 10
-		replace egp12 = 41 if `ibge90' == 11
-		replace egp12 = 41 if `ibge90' == 12
-		replace egp12 = 41 if `ibge90' == 13
-		replace egp12 = 41 if `ibge90' == 14
-		replace egp12 = 41 if `ibge90' == 15
-
-		replace egp12 = 42 if `ibge90' == 601
-		replace egp12 = 42 if `ibge90' == 811
-		replace egp12 = 42 if `ibge90' == 852
-
-		replace egp12 = 43 if `ibge90' == 301
-
-		replace egp12 = 44 if `ibge90' == 1
-		replace egp12 = 44 if `ibge90' == 2
-		replace egp12 = 44 if `ibge90' == 3
-		replace egp12 = 44 if `ibge90' == 4
-		replace egp12 = 44 if `ibge90' == 5
-		replace egp12 = 44 if `ibge90' == 6
-		replace egp12 = 50 if `ibge90' == 30
-
-		replace egp12 = 50 if `ibge90' == 51
-		replace egp12 = 50 if `ibge90' == 103
-		replace egp12 = 50 if `ibge90' == 104
-		replace egp12 = 50 if `ibge90' == 111
-		replace egp12 = 50 if `ibge90' == 112
-		replace egp12 = 50 if `ibge90' == 113
-		replace egp12 = 50 if `ibge90' == 131
-		replace egp12 = 50 if `ibge90' == 164
-		replace egp12 = 50 if `ibge90' == 165
-		replace egp12 = 50 if `ibge90' == 166
-		replace egp12 = 50 if `ibge90' == 167
-		replace egp12 = 50 if `ibge90' == 168
-		replace egp12 = 50 if `ibge90' == 271
-		replace egp12 = 50 if `ibge90' == 273
-		replace egp12 = 50 if `ibge90' == 274
-		replace egp12 = 50 if `ibge90' == 280
-		replace egp12 = 50 if `ibge90' == 281
-		replace egp12 = 50 if `ibge90' == 282
-		replace egp12 = 50 if `ibge90' == 283
-		replace egp12 = 50 if `ibge90' == 293
-		replace egp12 = 50 if `ibge90' == 401
-		replace egp12 = 50 if `ibge90' == 402
-		replace egp12 = 50 if `ibge90' == 403
-		replace egp12 = 50 if `ibge90' == 404
-		replace egp12 = 50 if `ibge90' == 405
-		replace egp12 = 50 if `ibge90' == 406
-		replace egp12 = 50 if `ibge90' == 571
-		replace egp12 = 50 if `ibge90' == 588
-		replace egp12 = 50 if `ibge90' == 722
-		replace egp12 = 50 if `ibge90' == 761
-		replace egp12 = 50 if `ibge90' == 914
-		replace egp12 = 50 if `ibge90' == 918
-
-		replace egp12 = 60 if `ibge90' == 411
-		replace egp12 = 60 if `ibge90' == 412
-		replace egp12 = 60 if `ibge90' == 413
-		replace egp12 = 60 if `ibge90' == 414
-		replace egp12 = 60 if `ibge90' == 415
-		replace egp12 = 60 if `ibge90' == 416
-		replace egp12 = 60 if `ibge90' == 417
-		replace egp12 = 60 if `ibge90' == 418
-		replace egp12 = 60 if `ibge90' == 419
-		replace egp12 = 60 if `ibge90' == 420
-		replace egp12 = 60 if `ibge90' == 421
-		replace egp12 = 60 if `ibge90' == 422
-		replace egp12 = 60 if `ibge90' == 423
-		replace egp12 = 60 if `ibge90' == 424
-		replace egp12 = 60 if `ibge90' == 425
-		replace egp12 = 60 if `ibge90' == 426
-		replace egp12 = 60 if `ibge90' == 427
-		replace egp12 = 60 if `ibge90' == 428
-		replace egp12 = 60 if `ibge90' == 429
-		replace egp12 = 60 if `ibge90' == 430
-		replace egp12 = 60 if `ibge90' == 431
-		replace egp12 = 60 if `ibge90' == 470
-		replace egp12 = 60 if `ibge90' == 471
-		replace egp12 = 60 if `ibge90' == 472
-		replace egp12 = 60 if `ibge90' == 473
-		replace egp12 = 60 if `ibge90' == 474
-		replace egp12 = 60 if `ibge90' == 477
-		replace egp12 = 60 if `ibge90' == 478
-		replace egp12 = 60 if `ibge90' == 479
-		replace egp12 = 60 if `ibge90' == 481
-		replace egp12 = 60 if `ibge90' == 482
-		replace egp12 = 60 if `ibge90' == 484
-		replace egp12 = 60 if `ibge90' == 485
-		replace egp12 = 60 if `ibge90' == 487
-		replace egp12 = 60 if `ibge90' == 488
-		replace egp12 = 60 if `ibge90' == 489
-		replace egp12 = 60 if `ibge90' == 501
-		replace egp12 = 60 if `ibge90' == 502
-		replace egp12 = 60 if `ibge90' == 503
-		replace egp12 = 60 if `ibge90' == 504
-		replace egp12 = 60 if `ibge90' == 505
-		replace egp12 = 60 if `ibge90' == 506
-		replace egp12 = 60 if `ibge90' == 507
-		replace egp12 = 60 if `ibge90' == 508
-		replace egp12 = 60 if `ibge90' == 509
-		replace egp12 = 60 if `ibge90' == 511
-		replace egp12 = 60 if `ibge90' == 512
-		replace egp12 = 60 if `ibge90' == 516
-		replace egp12 = 60 if `ibge90' == 517
-		replace egp12 = 60 if `ibge90' == 518
-		replace egp12 = 60 if `ibge90' == 551
-		replace egp12 = 60 if `ibge90' == 552
-		replace egp12 = 60 if `ibge90' == 553
-		replace egp12 = 60 if `ibge90' == 554
-		replace egp12 = 60 if `ibge90' == 555
-		replace egp12 = 60 if `ibge90' == 556
-		replace egp12 = 60 if `ibge90' == 557
-		replace egp12 = 60 if `ibge90' == 561
-		replace egp12 = 60 if `ibge90' == 562
-		replace egp12 = 60 if `ibge90' == 563
-		replace egp12 = 60 if `ibge90' == 572
-		replace egp12 = 60 if `ibge90' == 573
-		replace egp12 = 60 if `ibge90' == 581
-		replace egp12 = 60 if `ibge90' == 731
-		replace egp12 = 60 if `ibge90' == 741
-		replace egp12 = 60 if `ibge90' == 743
-		replace egp12 = 60 if `ibge90' == 745
-		replace egp12 = 60 if `ibge90' == 746
-		replace egp12 = 60 if `ibge90' == 813
-		replace egp12 = 60 if `ibge90' == 822
-		replace egp12 = 60 if `ibge90' == 823
-		replace egp12 = 60 if `ibge90' == 824
-		replace egp12 = 60 if `ibge90' == 866
-		replace egp12 = 60 if `ibge90' == 867
-		replace egp12 = 60 if `ibge90' == 868
-		replace egp12 = 60 if `ibge90' == 913
-		replace egp12 = 60 if `ibge90' == 915
-		replace egp12 = 60 if `ibge90' == 917
-		replace egp12 = 60 if `ibge90' == 921
-		replace egp12 = 60 if `ibge90' == 922
-
-		replace egp12 = 71 if `ibge90' == 272
-		replace egp12 = 71 if `ibge90' == 333
-		replace egp12 = 71 if `ibge90' == 341
-		replace egp12 = 71 if `ibge90' == 351
-		replace egp12 = 71 if `ibge90' == 361
-		replace egp12 = 71 if `ibge90' == 371
-		replace egp12 = 71 if `ibge90' == 391
-		replace egp12 = 71 if `ibge90' == 441
-		replace egp12 = 71 if `ibge90' == 442
-		replace egp12 = 71 if `ibge90' == 443
-		replace egp12 = 71 if `ibge90' == 444
-		replace egp12 = 71 if `ibge90' == 445
-		replace egp12 = 71 if `ibge90' == 446
-		replace egp12 = 71 if `ibge90' == 447
-		replace egp12 = 71 if `ibge90' == 448
-		replace egp12 = 71 if `ibge90' == 449
-		replace egp12 = 71 if `ibge90' == 450
-		replace egp12 = 71 if `ibge90' == 451
-		replace egp12 = 71 if `ibge90' == 452
-		replace egp12 = 71 if `ibge90' == 461
-		replace egp12 = 71 if `ibge90' == 462
-		replace egp12 = 71 if `ibge90' == 475
-		replace egp12 = 71 if `ibge90' == 483
-		replace egp12 = 71 if `ibge90' == 486
-		replace egp12 = 71 if `ibge90' == 490
-		replace egp12 = 71 if `ibge90' == 513
-		replace egp12 = 71 if `ibge90' == 514
-		replace egp12 = 71 if `ibge90' == 515
-		replace egp12 = 71 if `ibge90' == 519
-		replace egp12 = 71 if `ibge90' == 520
-		replace egp12 = 71 if `ibge90' == 521
-		replace egp12 = 71 if `ibge90' == 531
-		replace egp12 = 71 if `ibge90' == 532
-		replace egp12 = 71 if `ibge90' == 533
-		replace egp12 = 71 if `ibge90' == 534
-		replace egp12 = 71 if `ibge90' == 535
-		replace egp12 = 71 if `ibge90' == 536
-		replace egp12 = 71 if `ibge90' == 537
-		replace egp12 = 71 if `ibge90' == 538
-		replace egp12 = 71 if `ibge90' == 539
-		replace egp12 = 71 if `ibge90' == 540
-		replace egp12 = 71 if `ibge90' == 541
-		replace egp12 = 71 if `ibge90' == 542
-		replace egp12 = 71 if `ibge90' == 543
-		replace egp12 = 71 if `ibge90' == 544
-		replace egp12 = 71 if `ibge90' == 545
-		replace egp12 = 71 if `ibge90' == 564
-		replace egp12 = 71 if `ibge90' == 574
-		replace egp12 = 71 if `ibge90' == 575
-		replace egp12 = 71 if `ibge90' == 576
-		replace egp12 = 71 if `ibge90' == 577
-		replace egp12 = 71 if `ibge90' == 578
-		replace egp12 = 71 if `ibge90' == 579
-		replace egp12 = 71 if `ibge90' == 580
-		replace egp12 = 71 if `ibge90' == 582
-		replace egp12 = 71 if `ibge90' == 583
-		replace egp12 = 71 if `ibge90' == 584
-		replace egp12 = 71 if `ibge90' == 585
-		replace egp12 = 71 if `ibge90' == 586
-		replace egp12 = 71 if `ibge90' == 587
-		replace egp12 = 71 if `ibge90' == 589
-		replace egp12 = 71 if `ibge90' == 611
-		replace egp12 = 71 if `ibge90' == 612
-		replace egp12 = 71 if `ibge90' == 613
-		replace egp12 = 71 if `ibge90' == 614
-		replace egp12 = 71 if `ibge90' == 615
-		replace egp12 = 71 if `ibge90' == 616
-		replace egp12 = 71 if `ibge90' == 617
-		replace egp12 = 71 if `ibge90' == 621
-		replace egp12 = 71 if `ibge90' == 723
-		replace egp12 = 71 if `ibge90' == 724
-		replace egp12 = 71 if `ibge90' == 725
-		replace egp12 = 71 if `ibge90' == 726
-		replace egp12 = 71 if `ibge90' == 727
-		replace egp12 = 71 if `ibge90' == 732
-		replace egp12 = 71 if `ibge90' == 751
-		replace egp12 = 71 if `ibge90' == 752
-		replace egp12 = 71 if `ibge90' == 762
-		replace egp12 = 71 if `ibge90' == 775
-		replace egp12 = 71 if `ibge90' == 801
-		replace egp12 = 71 if `ibge90' == 802
-		replace egp12 = 71 if `ibge90' == 803
-		replace egp12 = 71 if `ibge90' == 804
-		replace egp12 = 71 if `ibge90' == 805
-		replace egp12 = 71 if `ibge90' == 806
-		replace egp12 = 71 if `ibge90' == 807
-		replace egp12 = 71 if `ibge90' == 808
-		replace egp12 = 71 if `ibge90' == 812
-		replace egp12 = 71 if `ibge90' == 825
-		replace egp12 = 71 if `ibge90' == 826
-		replace egp12 = 71 if `ibge90' == 841
-		replace egp12 = 71 if `ibge90' == 842
-		replace egp12 = 71 if `ibge90' == 843
-		replace egp12 = 71 if `ibge90' == 844
-		replace egp12 = 71 if `ibge90' == 916
-		replace egp12 = 71 if `ibge90' == 919
-		replace egp12 = 71 if `ibge90' == 920
-		replace egp12 = 71 if `ibge90' == 923
-		replace egp12 = 71 if `ibge90' == 924
-		replace egp12 = 71 if `ibge90' == 925
-		replace egp12 = 71 if `ibge90' == 926
-
-		replace egp12 = 72 if `ibge90' == 302
-		replace egp12 = 72 if `ibge90' == 303
-		replace egp12 = 72 if `ibge90' == 304
-		replace egp12 = 72 if `ibge90' == 305
-		replace egp12 = 72 if `ibge90' == 321
-		replace egp12 = 72 if `ibge90' == 322
-		replace egp12 = 72 if `ibge90' == 331
-		replace egp12 = 72 if `ibge90' == 332
-		replace egp12 = 72 if `ibge90' == 334
-		replace egp12 = 72 if `ibge90' == 336
-		replace egp12 = 72 if `ibge90' == 345
-		replace egp12 = 72 if `ibge90' == 381
-		replace egp12 = 72 if `ibge90' == 753
+	}
+}
 
 
-		replace egp12 = 50 if `ibge90' == 125
-		replace egp12 = 20 if `ibge90' == 173
-		replace egp12 = 60 if `ibge90' == 821
-		replace egp12 = 44 if `ibge90' == 851
 
-		replace egp12 = 60 if `ibge90' == 741
-		replace egp12 = 60 if `ibge90' == 742
+*********************************************************************
+* 2 - EGP
+*********************************************************************
 
-		replace egp12 = 72 if `ibge90' == 300
+if "`egp12'" != ""  |  "`egp7'" != "" |  "`egp'" != ""{
+	quietly {
 
-		replace egp12 = 60 if `ibge90' == 744
+	noisily di "Criando classes EGP..."		
+	gen egp12=.
+	lab var egp12 "EGP com 12 classes"
 
-		replace egp12 = 71 if `ibge90' == 476
-		replace egp12 = 20 if `ibge90' == 172
+	replace egp12 = 10 if `ocupacao' == 20
+	replace egp12 = 10 if `ocupacao' == 21
+	replace egp12 = 10 if `ocupacao' == 33
+	replace egp12 = 10 if `ocupacao' == 38
+	replace egp12 = 10 if `ocupacao' == 101
+	replace egp12 = 10 if `ocupacao' == 102
+	replace egp12 = 10 if `ocupacao' == 121
+	replace egp12 = 10 if `ocupacao' == 122
+	replace egp12 = 10 if `ocupacao' == 123
+	replace egp12 = 10 if `ocupacao' == 124
+	replace egp12 = 10 if `ocupacao' == 141
+	replace egp12 = 10 if `ocupacao' == 142
+	replace egp12 = 10 if `ocupacao' == 143
+	replace egp12 = 10 if `ocupacao' == 144
+	replace egp12 = 10 if `ocupacao' == 151
+	replace egp12 = 10 if `ocupacao' == 152
+	replace egp12 = 10 if `ocupacao' == 171
+	replace egp12 = 10 if `ocupacao' == 181
+	replace egp12 = 10 if `ocupacao' == 183
+	replace egp12 = 10 if `ocupacao' == 201
+	replace egp12 = 10 if `ocupacao' == 202
+	replace egp12 = 10 if `ocupacao' == 203
+	replace egp12 = 10 if `ocupacao' == 205
+	replace egp12 = 10 if `ocupacao' == 211
+	replace egp12 = 10 if `ocupacao' == 212
+	replace egp12 = 10 if `ocupacao' == 231
+	replace egp12 = 10 if `ocupacao' == 232
+	replace egp12 = 10 if `ocupacao' == 233
+	replace egp12 = 10 if `ocupacao' == 292
+	replace egp12 = 10 if `ocupacao' == 711
 
-		/* missing */
-		replace egp12 = .  if `ibge90' ==928
-		replace egp12 = .  if `ibge90' ==927
+	replace egp12 = 20 if `ocupacao' == 32
+	replace egp12 = 20 if `ocupacao' == 34
+	replace egp12 = 20 if `ocupacao' == 35
+	replace egp12 = 20 if `ocupacao' == 36
+	replace egp12 = 20 if `ocupacao' == 37
+	replace egp12 = 20 if `ocupacao' == 39
+	replace egp12 = 20 if `ocupacao' == 40
+	replace egp12 = 20 if `ocupacao' == 50
+	replace egp12 = 20 if `ocupacao' == 52
+	replace egp12 = 20 if `ocupacao' == 153
+	replace egp12 = 20 if `ocupacao' == 154
+	replace egp12 = 20 if `ocupacao' == 182
+	replace egp12 = 20 if `ocupacao' == 204
+	replace egp12 = 20 if `ocupacao' == 213
+	replace egp12 = 20 if `ocupacao' == 241
+	replace egp12 = 20 if `ocupacao' == 252
+	replace egp12 = 20 if `ocupacao' == 291
+	replace egp12 = 20 if `ocupacao' == 641
+	replace egp12 = 20 if `ocupacao' == 643
+	replace egp12 = 20 if `ocupacao' == 644
+	replace egp12 = 20 if `ocupacao' == 721
 
-		/* adicionando ocupação 133 (técnicos em meteorologia)*/
+	replace egp12 = 31 if `ocupacao' == 54
+	replace egp12 = 31 if `ocupacao' == 55
+	replace egp12 = 31 if `ocupacao' == 56
+	replace egp12 = 31 if `ocupacao' == 57
+	replace egp12 = 31 if `ocupacao' == 58
+	replace egp12 = 31 if `ocupacao' == 59
+	replace egp12 = 31 if `ocupacao' == 60
+	replace egp12 = 31 if `ocupacao' == 61
+	replace egp12 = 31 if `ocupacao' == 62
+	replace egp12 = 31 if `ocupacao' == 64
+	replace egp12 = 31 if `ocupacao' == 191
+	replace egp12 = 31 if `ocupacao' == 192
+	replace egp12 = 31 if `ocupacao' == 193
+	replace egp12 = 31 if `ocupacao' == 194
+	replace egp12 = 31 if `ocupacao' == 214
+	replace egp12 = 31 if `ocupacao' == 215
+	replace egp12 = 31 if `ocupacao' == 216
+	replace egp12 = 31 if `ocupacao' == 217
+	replace egp12 = 31 if `ocupacao' == 218
+	replace egp12 = 31 if `ocupacao' == 219
+	replace egp12 = 31 if `ocupacao' == 221
+	replace egp12 = 31 if `ocupacao' == 222
+	replace egp12 = 31 if `ocupacao' == 242
+	replace egp12 = 31 if `ocupacao' == 243
+	replace egp12 = 31 if `ocupacao' == 244
+	replace egp12 = 31 if `ocupacao' == 251
+	replace egp12 = 31 if `ocupacao' == 261
+	replace egp12 = 31 if `ocupacao' == 275
+	replace egp12 = 31 if `ocupacao' == 276
+	replace egp12 = 31 if `ocupacao' == 277
+	replace egp12 = 31 if `ocupacao' == 278
+	replace egp12 = 31 if `ocupacao' == 279
+	replace egp12 = 31 if `ocupacao' == 631
+	replace egp12 = 31 if `ocupacao' == 632
+	replace egp12 = 31 if `ocupacao' == 633
+	replace egp12 = 31 if `ocupacao' == 642
+	replace egp12 = 31 if `ocupacao' == 645
+	replace egp12 = 31 if `ocupacao' == 831
+	replace egp12 = 31 if `ocupacao' == 832
+	replace egp12 = 31 if `ocupacao' == 833
+	replace egp12 = 31 if `ocupacao' == 834
+	replace egp12 = 31 if `ocupacao' == 863
+	replace egp12 = 31 if `ocupacao' == 864
+	replace egp12 = 31 if `ocupacao' == 865
 
-		replace egp12 = 32 if `ibge90' == 133
+	replace egp12 = 32 if `ocupacao' == 53
+	replace egp12 = 32 if `ocupacao' == 63
+	replace egp12 = 32 if `ocupacao' == 132
+	replace egp12 = 32 if `ocupacao' == 162
+	replace egp12 = 32 if `ocupacao' == 163
+	replace egp12 = 32 if `ocupacao' == 602
+	replace egp12 = 32 if `ocupacao' == 603
+	replace egp12 = 32 if `ocupacao' == 604
+	replace egp12 = 32 if `ocupacao' == 605
+	replace egp12 = 32 if `ocupacao' == 646
+	replace egp12 = 32 if `ocupacao' == 712
+	replace egp12 = 32 if `ocupacao' == 771
+	replace egp12 = 32 if `ocupacao' == 772
+	replace egp12 = 32 if `ocupacao' == 773
+	replace egp12 = 32 if `ocupacao' == 774
+	replace egp12 = 32 if `ocupacao' == 814
+	replace egp12 = 32 if `ocupacao' == 815
+	replace egp12 = 32 if `ocupacao' == 816
+	replace egp12 = 32 if `ocupacao' == 817
+	replace egp12 = 32 if `ocupacao' == 818
+	replace egp12 = 32 if `ocupacao' == 845
+	replace egp12 = 32 if `ocupacao' == 869
+	replace egp12 = 32 if `ocupacao' == 911
+	replace egp12 = 32 if `ocupacao' == 912
 
-		/* adicionando ocupação 161 (acadêmicos de hospital)*/
+	replace egp12 = 41 if `ocupacao' == 7
+	replace egp12 = 41 if `ocupacao' == 8
+	replace egp12 = 41 if `ocupacao' == 9
+	replace egp12 = 41 if `ocupacao' == 10
+	replace egp12 = 41 if `ocupacao' == 11
+	replace egp12 = 41 if `ocupacao' == 12
+	replace egp12 = 41 if `ocupacao' == 13
+	replace egp12 = 41 if `ocupacao' == 14
+	replace egp12 = 41 if `ocupacao' == 15
 
-		replace egp12 = 20 if `ibge90' == 161
+	replace egp12 = 42 if `ocupacao' == 601
+	replace egp12 = 42 if `ocupacao' == 811
+	replace egp12 = 42 if `ocupacao' == 852
 
-		/* adicionando ocupação 31 (administração na extração ve>=tal e pesca)*/
+	replace egp12 = 43 if `ocupacao' == 301
 
-		replace egp12 = 50 if `ibge90' == 31
+	replace egp12 = 44 if `ocupacao' == 1
+	replace egp12 = 44 if `ocupacao' == 2
+	replace egp12 = 44 if `ocupacao' == 3
+	replace egp12 = 44 if `ocupacao' == 4
+	replace egp12 = 44 if `ocupacao' == 5
+	replace egp12 = 44 if `ocupacao' == 6
+	replace egp12 = 50 if `ocupacao' == 30
 
-		/* adicionando ocupação 335 (ervateiros)*/
+	replace egp12 = 50 if `ocupacao' == 51
+	replace egp12 = 50 if `ocupacao' == 103
+	replace egp12 = 50 if `ocupacao' == 104
+	replace egp12 = 50 if `ocupacao' == 111
+	replace egp12 = 50 if `ocupacao' == 112
+	replace egp12 = 50 if `ocupacao' == 113
+	replace egp12 = 50 if `ocupacao' == 131
+	replace egp12 = 50 if `ocupacao' == 164
+	replace egp12 = 50 if `ocupacao' == 165
+	replace egp12 = 50 if `ocupacao' == 166
+	replace egp12 = 50 if `ocupacao' == 167
+	replace egp12 = 50 if `ocupacao' == 168
+	replace egp12 = 50 if `ocupacao' == 271
+	replace egp12 = 50 if `ocupacao' == 273
+	replace egp12 = 50 if `ocupacao' == 274
+	replace egp12 = 50 if `ocupacao' == 280
+	replace egp12 = 50 if `ocupacao' == 281
+	replace egp12 = 50 if `ocupacao' == 282
+	replace egp12 = 50 if `ocupacao' == 283
+	replace egp12 = 50 if `ocupacao' == 293
+	replace egp12 = 50 if `ocupacao' == 401
+	replace egp12 = 50 if `ocupacao' == 402
+	replace egp12 = 50 if `ocupacao' == 403
+	replace egp12 = 50 if `ocupacao' == 404
+	replace egp12 = 50 if `ocupacao' == 405
+	replace egp12 = 50 if `ocupacao' == 406
+	replace egp12 = 50 if `ocupacao' == 571
+	replace egp12 = 50 if `ocupacao' == 588
+	replace egp12 = 50 if `ocupacao' == 722
+	replace egp12 = 50 if `ocupacao' == 761
+	replace egp12 = 50 if `ocupacao' == 914
+	replace egp12 = 50 if `ocupacao' == 918
 
-		replace egp12 = 72 if `ibge90' == 335
+	replace egp12 = 60 if `ocupacao' == 411
+	replace egp12 = 60 if `ocupacao' == 412
+	replace egp12 = 60 if `ocupacao' == 413
+	replace egp12 = 60 if `ocupacao' == 414
+	replace egp12 = 60 if `ocupacao' == 415
+	replace egp12 = 60 if `ocupacao' == 416
+	replace egp12 = 60 if `ocupacao' == 417
+	replace egp12 = 60 if `ocupacao' == 418
+	replace egp12 = 60 if `ocupacao' == 419
+	replace egp12 = 60 if `ocupacao' == 420
+	replace egp12 = 60 if `ocupacao' == 421
+	replace egp12 = 60 if `ocupacao' == 422
+	replace egp12 = 60 if `ocupacao' == 423
+	replace egp12 = 60 if `ocupacao' == 424
+	replace egp12 = 60 if `ocupacao' == 425
+	replace egp12 = 60 if `ocupacao' == 426
+	replace egp12 = 60 if `ocupacao' == 427
+	replace egp12 = 60 if `ocupacao' == 428
+	replace egp12 = 60 if `ocupacao' == 429
+	replace egp12 = 60 if `ocupacao' == 430
+	replace egp12 = 60 if `ocupacao' == 431
+	replace egp12 = 60 if `ocupacao' == 470
+	replace egp12 = 60 if `ocupacao' == 471
+	replace egp12 = 60 if `ocupacao' == 472
+	replace egp12 = 60 if `ocupacao' == 473
+	replace egp12 = 60 if `ocupacao' == 474
+	replace egp12 = 60 if `ocupacao' == 477
+	replace egp12 = 60 if `ocupacao' == 478
+	replace egp12 = 60 if `ocupacao' == 479
+	replace egp12 = 60 if `ocupacao' == 481
+	replace egp12 = 60 if `ocupacao' == 482
+	replace egp12 = 60 if `ocupacao' == 484
+	replace egp12 = 60 if `ocupacao' == 485
+	replace egp12 = 60 if `ocupacao' == 487
+	replace egp12 = 60 if `ocupacao' == 488
+	replace egp12 = 60 if `ocupacao' == 489
+	replace egp12 = 60 if `ocupacao' == 501
+	replace egp12 = 60 if `ocupacao' == 502
+	replace egp12 = 60 if `ocupacao' == 503
+	replace egp12 = 60 if `ocupacao' == 504
+	replace egp12 = 60 if `ocupacao' == 505
+	replace egp12 = 60 if `ocupacao' == 506
+	replace egp12 = 60 if `ocupacao' == 507
+	replace egp12 = 60 if `ocupacao' == 508
+	replace egp12 = 60 if `ocupacao' == 509
+	replace egp12 = 60 if `ocupacao' == 511
+	replace egp12 = 60 if `ocupacao' == 512
+	replace egp12 = 60 if `ocupacao' == 516
+	replace egp12 = 60 if `ocupacao' == 517
+	replace egp12 = 60 if `ocupacao' == 518
+	replace egp12 = 60 if `ocupacao' == 551
+	replace egp12 = 60 if `ocupacao' == 552
+	replace egp12 = 60 if `ocupacao' == 553
+	replace egp12 = 60 if `ocupacao' == 554
+	replace egp12 = 60 if `ocupacao' == 555
+	replace egp12 = 60 if `ocupacao' == 556
+	replace egp12 = 60 if `ocupacao' == 557
+	replace egp12 = 60 if `ocupacao' == 561
+	replace egp12 = 60 if `ocupacao' == 562
+	replace egp12 = 60 if `ocupacao' == 563
+	replace egp12 = 60 if `ocupacao' == 572
+	replace egp12 = 60 if `ocupacao' == 573
+	replace egp12 = 60 if `ocupacao' == 581
+	replace egp12 = 60 if `ocupacao' == 731
+	replace egp12 = 60 if `ocupacao' == 741
+	replace egp12 = 60 if `ocupacao' == 743
+	replace egp12 = 60 if `ocupacao' == 745
+	replace egp12 = 60 if `ocupacao' == 746
+	replace egp12 = 60 if `ocupacao' == 813
+	replace egp12 = 60 if `ocupacao' == 822
+	replace egp12 = 60 if `ocupacao' == 823
+	replace egp12 = 60 if `ocupacao' == 824
+	replace egp12 = 60 if `ocupacao' == 866
+	replace egp12 = 60 if `ocupacao' == 867
+	replace egp12 = 60 if `ocupacao' == 868
+	replace egp12 = 60 if `ocupacao' == 913
+	replace egp12 = 60 if `ocupacao' == 915
+	replace egp12 = 60 if `ocupacao' == 917
+	replace egp12 = 60 if `ocupacao' == 921
+	replace egp12 = 60 if `ocupacao' == 922
 
-		/* para classificar militares*/
+	replace egp12 = 71 if `ocupacao' == 272
+	replace egp12 = 71 if `ocupacao' == 333
+	replace egp12 = 71 if `ocupacao' == 341
+	replace egp12 = 71 if `ocupacao' == 351
+	replace egp12 = 71 if `ocupacao' == 361
+	replace egp12 = 71 if `ocupacao' == 371
+	replace egp12 = 71 if `ocupacao' == 391
+	replace egp12 = 71 if `ocupacao' == 441
+	replace egp12 = 71 if `ocupacao' == 442
+	replace egp12 = 71 if `ocupacao' == 443
+	replace egp12 = 71 if `ocupacao' == 444
+	replace egp12 = 71 if `ocupacao' == 445
+	replace egp12 = 71 if `ocupacao' == 446
+	replace egp12 = 71 if `ocupacao' == 447
+	replace egp12 = 71 if `ocupacao' == 448
+	replace egp12 = 71 if `ocupacao' == 449
+	replace egp12 = 71 if `ocupacao' == 450
+	replace egp12 = 71 if `ocupacao' == 451
+	replace egp12 = 71 if `ocupacao' == 452
+	replace egp12 = 71 if `ocupacao' == 461
+	replace egp12 = 71 if `ocupacao' == 462
+	replace egp12 = 71 if `ocupacao' == 475
+	replace egp12 = 71 if `ocupacao' == 483
+	replace egp12 = 71 if `ocupacao' == 486
+	replace egp12 = 71 if `ocupacao' == 490
+	replace egp12 = 71 if `ocupacao' == 513
+	replace egp12 = 71 if `ocupacao' == 514
+	replace egp12 = 71 if `ocupacao' == 515
+	replace egp12 = 71 if `ocupacao' == 519
+	replace egp12 = 71 if `ocupacao' == 520
+	replace egp12 = 71 if `ocupacao' == 521
+	replace egp12 = 71 if `ocupacao' == 531
+	replace egp12 = 71 if `ocupacao' == 532
+	replace egp12 = 71 if `ocupacao' == 533
+	replace egp12 = 71 if `ocupacao' == 534
+	replace egp12 = 71 if `ocupacao' == 535
+	replace egp12 = 71 if `ocupacao' == 536
+	replace egp12 = 71 if `ocupacao' == 537
+	replace egp12 = 71 if `ocupacao' == 538
+	replace egp12 = 71 if `ocupacao' == 539
+	replace egp12 = 71 if `ocupacao' == 540
+	replace egp12 = 71 if `ocupacao' == 541
+	replace egp12 = 71 if `ocupacao' == 542
+	replace egp12 = 71 if `ocupacao' == 543
+	replace egp12 = 71 if `ocupacao' == 544
+	replace egp12 = 71 if `ocupacao' == 545
+	replace egp12 = 71 if `ocupacao' == 564
+	replace egp12 = 71 if `ocupacao' == 574
+	replace egp12 = 71 if `ocupacao' == 575
+	replace egp12 = 71 if `ocupacao' == 576
+	replace egp12 = 71 if `ocupacao' == 577
+	replace egp12 = 71 if `ocupacao' == 578
+	replace egp12 = 71 if `ocupacao' == 579
+	replace egp12 = 71 if `ocupacao' == 580
+	replace egp12 = 71 if `ocupacao' == 582
+	replace egp12 = 71 if `ocupacao' == 583
+	replace egp12 = 71 if `ocupacao' == 584
+	replace egp12 = 71 if `ocupacao' == 585
+	replace egp12 = 71 if `ocupacao' == 586
+	replace egp12 = 71 if `ocupacao' == 587
+	replace egp12 = 71 if `ocupacao' == 589
+	replace egp12 = 71 if `ocupacao' == 611
+	replace egp12 = 71 if `ocupacao' == 612
+	replace egp12 = 71 if `ocupacao' == 613
+	replace egp12 = 71 if `ocupacao' == 614
+	replace egp12 = 71 if `ocupacao' == 615
+	replace egp12 = 71 if `ocupacao' == 616
+	replace egp12 = 71 if `ocupacao' == 617
+	replace egp12 = 71 if `ocupacao' == 621
+	replace egp12 = 71 if `ocupacao' == 723
+	replace egp12 = 71 if `ocupacao' == 724
+	replace egp12 = 71 if `ocupacao' == 725
+	replace egp12 = 71 if `ocupacao' == 726
+	replace egp12 = 71 if `ocupacao' == 727
+	replace egp12 = 71 if `ocupacao' == 732
+	replace egp12 = 71 if `ocupacao' == 751
+	replace egp12 = 71 if `ocupacao' == 752
+	replace egp12 = 71 if `ocupacao' == 762
+	replace egp12 = 71 if `ocupacao' == 775
+	replace egp12 = 71 if `ocupacao' == 801
+	replace egp12 = 71 if `ocupacao' == 802
+	replace egp12 = 71 if `ocupacao' == 803
+	replace egp12 = 71 if `ocupacao' == 804
+	replace egp12 = 71 if `ocupacao' == 805
+	replace egp12 = 71 if `ocupacao' == 806
+	replace egp12 = 71 if `ocupacao' == 807
+	replace egp12 = 71 if `ocupacao' == 808
+	replace egp12 = 71 if `ocupacao' == 812
+	replace egp12 = 71 if `ocupacao' == 825
+	replace egp12 = 71 if `ocupacao' == 826
+	replace egp12 = 71 if `ocupacao' == 841
+	replace egp12 = 71 if `ocupacao' == 842
+	replace egp12 = 71 if `ocupacao' == 843
+	replace egp12 = 71 if `ocupacao' == 844
+	replace egp12 = 71 if `ocupacao' == 916
+	replace egp12 = 71 if `ocupacao' == 919
+	replace egp12 = 71 if `ocupacao' == 920
+	replace egp12 = 71 if `ocupacao' == 923
+	replace egp12 = 71 if `ocupacao' == 924
+	replace egp12 = 71 if `ocupacao' == 925
+	replace egp12 = 71 if `ocupacao' == 926
 
-		replace egp12 = 31 if `ibge90' == 861
-		replace egp12 = 71 if `ibge90' == 862
+	replace egp12 = 72 if `ocupacao' == 302
+	replace egp12 = 72 if `ocupacao' == 303
+	replace egp12 = 72 if `ocupacao' == 304
+	replace egp12 = 72 if `ocupacao' == 305
+	replace egp12 = 72 if `ocupacao' == 321
+	replace egp12 = 72 if `ocupacao' == 322
+	replace egp12 = 72 if `ocupacao' == 331
+	replace egp12 = 72 if `ocupacao' == 332
+	replace egp12 = 72 if `ocupacao' == 334
+	replace egp12 = 72 if `ocupacao' == 336
+	replace egp12 = 72 if `ocupacao' == 345
+	replace egp12 = 72 if `ocupacao' == 381
+	replace egp12 = 72 if `ocupacao' == 753
 
+
+	replace egp12 = 50 if `ocupacao' == 125
+	replace egp12 = 20 if `ocupacao' == 173
+	replace egp12 = 60 if `ocupacao' == 821
+	replace egp12 = 44 if `ocupacao' == 851
+
+	replace egp12 = 60 if `ocupacao' == 741
+	replace egp12 = 60 if `ocupacao' == 742
+
+	replace egp12 = 72 if `ocupacao' == 300
+
+	replace egp12 = 60 if `ocupacao' == 744
+
+	replace egp12 = 71 if `ocupacao' == 476
+	replace egp12 = 20 if `ocupacao' == 172
+
+	/* missing */
+	replace egp12 = .  if `ocupacao' ==928
+	replace egp12 = .  if `ocupacao' ==927
+
+	/* adicionando ocupação 133 (técnicos em meteorologia)*/
+
+	replace egp12 = 32 if `ocupacao' == 133
+
+	/* adicionando ocupação 161 (acadêmicos de hospital)*/
+
+	replace egp12 = 20 if `ocupacao' == 161
+
+	/* adicionando ocupação 31 (administração na extração ve>=tal e pesca)*/
+
+	replace egp12 = 50 if `ocupacao' == 31
+
+	/* adicionando ocupação 335 (ervateiros)*/
+
+	replace egp12 = 72 if `ocupacao' == 335
+
+	/* para classificar militares*/
+
+	replace egp12 = 31 if `ocupacao' == 861
+	replace egp12 = 71 if `ocupacao' == 862
+
+
+	/*--------------------------------------------------------------------
+	- 2.1 - Ajustes EGP para ano>2001
+	---------------------------------------------------------------------*/
+	if `ano'>2001 {
 		* ajustes 
 
 		replace egp12 = 41 if `v9906' == 1310 & `v4808' == 2 & `v4706' == 10	
@@ -1276,449 +1297,11 @@ if `ano'>2001 {
 
 		replace egp12 = 44 if `v9906' == 6301 & `v4706' == 10
 		replace egp12 = 44 if `v9906' == 6410 & `v4706' == 10 & `v4808' == 1
-		replace egp12 = 32 if `v9906' == 3541 & `ibge90' != 15 & `ibge90' != 601
+		replace egp12 = 32 if `v9906' == 3541 & `ocupacao' != 15 & `ocupacao' != 601
 	}
+	}
+}
 	
-	}
-}
-
-*********************************************************************
-* 2 - Pré-2002
-*********************************************************************
-
-if `ano'<2002 {
-	quietly {
-
-	/*--------------------------------------------------------------------
-	- 2.1 EGP
-	---------------------------------------------------------------------*/
-	if "`egp12'" != ""  |  "`egp7'" != "" |  "`egp'" != ""{
-
-		noisily di "Criando classes EGP..."		
-		gen egp12=.
-		lab var egp12 "EGP com 12 classes"
-
-		replace egp12 = 10 if `v9906' == 20
-		replace egp12 = 10 if `v9906' == 21
-		replace egp12 = 10 if `v9906' == 33
-		replace egp12 = 10 if `v9906' == 38
-		replace egp12 = 10 if `v9906' == 101
-		replace egp12 = 10 if `v9906' == 102
-		replace egp12 = 10 if `v9906' == 121
-		replace egp12 = 10 if `v9906' == 122
-		replace egp12 = 10 if `v9906' == 123
-		replace egp12 = 10 if `v9906' == 124
-		replace egp12 = 10 if `v9906' == 141
-		replace egp12 = 10 if `v9906' == 142
-		replace egp12 = 10 if `v9906' == 143
-		replace egp12 = 10 if `v9906' == 144
-		replace egp12 = 10 if `v9906' == 151
-		replace egp12 = 10 if `v9906' == 152
-		replace egp12 = 10 if `v9906' == 171
-		replace egp12 = 10 if `v9906' == 181
-		replace egp12 = 10 if `v9906' == 183
-		replace egp12 = 10 if `v9906' == 201
-		replace egp12 = 10 if `v9906' == 202
-		replace egp12 = 10 if `v9906' == 203
-		replace egp12 = 10 if `v9906' == 205
-		replace egp12 = 10 if `v9906' == 211
-		replace egp12 = 10 if `v9906' == 212
-		replace egp12 = 10 if `v9906' == 231
-		replace egp12 = 10 if `v9906' == 232
-		replace egp12 = 10 if `v9906' == 233
-		replace egp12 = 10 if `v9906' == 292
-		replace egp12 = 10 if `v9906' == 711
-
-		replace egp12 = 20 if `v9906' == 32
-		replace egp12 = 20 if `v9906' == 34
-		replace egp12 = 20 if `v9906' == 35
-		replace egp12 = 20 if `v9906' == 36
-		replace egp12 = 20 if `v9906' == 37
-		replace egp12 = 20 if `v9906' == 39
-		replace egp12 = 20 if `v9906' == 40
-		replace egp12 = 20 if `v9906' == 50
-		replace egp12 = 20 if `v9906' == 52
-		replace egp12 = 20 if `v9906' == 153
-		replace egp12 = 20 if `v9906' == 154
-		replace egp12 = 20 if `v9906' == 182
-		replace egp12 = 20 if `v9906' == 204
-		replace egp12 = 20 if `v9906' == 213
-		replace egp12 = 20 if `v9906' == 241
-		replace egp12 = 20 if `v9906' == 252
-		replace egp12 = 20 if `v9906' == 291
-		replace egp12 = 20 if `v9906' == 641
-		replace egp12 = 20 if `v9906' == 643
-		replace egp12 = 20 if `v9906' == 644
-		replace egp12 = 20 if `v9906' == 721
-
-		replace egp12 = 31 if `v9906' == 54
-		replace egp12 = 31 if `v9906' == 55
-		replace egp12 = 31 if `v9906' == 56
-		replace egp12 = 31 if `v9906' == 57
-		replace egp12 = 31 if `v9906' == 58
-		replace egp12 = 31 if `v9906' == 59
-		replace egp12 = 31 if `v9906' == 60
-		replace egp12 = 31 if `v9906' == 61
-		replace egp12 = 31 if `v9906' == 62
-		replace egp12 = 31 if `v9906' == 64
-		replace egp12 = 31 if `v9906' == 191
-		replace egp12 = 31 if `v9906' == 192
-		replace egp12 = 31 if `v9906' == 193
-		replace egp12 = 31 if `v9906' == 194
-		replace egp12 = 31 if `v9906' == 214
-		replace egp12 = 31 if `v9906' == 215
-		replace egp12 = 31 if `v9906' == 216
-		replace egp12 = 31 if `v9906' == 217
-		replace egp12 = 31 if `v9906' == 218
-		replace egp12 = 31 if `v9906' == 219
-		replace egp12 = 31 if `v9906' == 221
-		replace egp12 = 31 if `v9906' == 222
-		replace egp12 = 31 if `v9906' == 242
-		replace egp12 = 31 if `v9906' == 243
-		replace egp12 = 31 if `v9906' == 244
-		replace egp12 = 31 if `v9906' == 251
-		replace egp12 = 31 if `v9906' == 261
-		replace egp12 = 31 if `v9906' == 275
-		replace egp12 = 31 if `v9906' == 276
-		replace egp12 = 31 if `v9906' == 277
-		replace egp12 = 31 if `v9906' == 278
-		replace egp12 = 31 if `v9906' == 279
-		replace egp12 = 31 if `v9906' == 631
-		replace egp12 = 31 if `v9906' == 632
-		replace egp12 = 31 if `v9906' == 633
-		replace egp12 = 31 if `v9906' == 642
-		replace egp12 = 31 if `v9906' == 645
-		replace egp12 = 31 if `v9906' == 831
-		replace egp12 = 31 if `v9906' == 832
-		replace egp12 = 31 if `v9906' == 833
-		replace egp12 = 31 if `v9906' == 834
-		replace egp12 = 31 if `v9906' == 863
-		replace egp12 = 31 if `v9906' == 864
-		replace egp12 = 31 if `v9906' == 865
-
-		replace egp12 = 32 if `v9906' == 53
-		replace egp12 = 32 if `v9906' == 63
-		replace egp12 = 32 if `v9906' == 132
-		replace egp12 = 32 if `v9906' == 162
-		replace egp12 = 32 if `v9906' == 163
-		replace egp12 = 32 if `v9906' == 602
-		replace egp12 = 32 if `v9906' == 603
-		replace egp12 = 32 if `v9906' == 604
-		replace egp12 = 32 if `v9906' == 605
-		replace egp12 = 32 if `v9906' == 646
-		replace egp12 = 32 if `v9906' == 712
-		replace egp12 = 32 if `v9906' == 771
-		replace egp12 = 32 if `v9906' == 772
-		replace egp12 = 32 if `v9906' == 773
-		replace egp12 = 32 if `v9906' == 774
-		replace egp12 = 32 if `v9906' == 814
-		replace egp12 = 32 if `v9906' == 815
-		replace egp12 = 32 if `v9906' == 816
-		replace egp12 = 32 if `v9906' == 817
-		replace egp12 = 32 if `v9906' == 818
-		replace egp12 = 32 if `v9906' == 845
-		replace egp12 = 32 if `v9906' == 869
-		replace egp12 = 32 if `v9906' == 911
-		replace egp12 = 32 if `v9906' == 912
-
-		replace egp12 = 41 if `v9906' == 7
-		replace egp12 = 41 if `v9906' == 8
-		replace egp12 = 41 if `v9906' == 9
-		replace egp12 = 41 if `v9906' == 10
-		replace egp12 = 41 if `v9906' == 11
-		replace egp12 = 41 if `v9906' == 12
-		replace egp12 = 41 if `v9906' == 13
-		replace egp12 = 41 if `v9906' == 14
-		replace egp12 = 41 if `v9906' == 15
-
-		replace egp12 = 42 if `v9906' == 601
-		replace egp12 = 42 if `v9906' == 811
-		replace egp12 = 42 if `v9906' == 852
-
-		replace egp12 = 43 if `v9906' == 301
-
-		replace egp12 = 44 if `v9906' == 1
-		replace egp12 = 44 if `v9906' == 2
-		replace egp12 = 44 if `v9906' == 3
-		replace egp12 = 44 if `v9906' == 4
-		replace egp12 = 44 if `v9906' == 5
-		replace egp12 = 44 if `v9906' == 6
-		replace egp12 = 50 if `v9906' == 30
-
-		replace egp12 = 50 if `v9906' == 51
-		replace egp12 = 50 if `v9906' == 103
-		replace egp12 = 50 if `v9906' == 104
-		replace egp12 = 50 if `v9906' == 111
-		replace egp12 = 50 if `v9906' == 112
-		replace egp12 = 50 if `v9906' == 113
-		replace egp12 = 50 if `v9906' == 131
-		replace egp12 = 50 if `v9906' == 164
-		replace egp12 = 50 if `v9906' == 165
-		replace egp12 = 50 if `v9906' == 166
-		replace egp12 = 50 if `v9906' == 167
-		replace egp12 = 50 if `v9906' == 168
-		replace egp12 = 50 if `v9906' == 271
-		replace egp12 = 50 if `v9906' == 273
-		replace egp12 = 50 if `v9906' == 274
-		replace egp12 = 50 if `v9906' == 280
-		replace egp12 = 50 if `v9906' == 281
-		replace egp12 = 50 if `v9906' == 282
-		replace egp12 = 50 if `v9906' == 283
-		replace egp12 = 50 if `v9906' == 293
-		replace egp12 = 50 if `v9906' == 401
-		replace egp12 = 50 if `v9906' == 402
-		replace egp12 = 50 if `v9906' == 403
-		replace egp12 = 50 if `v9906' == 404
-		replace egp12 = 50 if `v9906' == 405
-		replace egp12 = 50 if `v9906' == 406
-		replace egp12 = 50 if `v9906' == 571
-		replace egp12 = 50 if `v9906' == 588
-		replace egp12 = 50 if `v9906' == 722
-		replace egp12 = 50 if `v9906' == 761
-		replace egp12 = 50 if `v9906' == 914
-		replace egp12 = 50 if `v9906' == 918
-
-		replace egp12 = 60 if `v9906' == 411
-		replace egp12 = 60 if `v9906' == 412
-		replace egp12 = 60 if `v9906' == 413
-		replace egp12 = 60 if `v9906' == 414
-		replace egp12 = 60 if `v9906' == 415
-		replace egp12 = 60 if `v9906' == 416
-		replace egp12 = 60 if `v9906' == 417
-		replace egp12 = 60 if `v9906' == 418
-		replace egp12 = 60 if `v9906' == 419
-		replace egp12 = 60 if `v9906' == 420
-		replace egp12 = 60 if `v9906' == 421
-		replace egp12 = 60 if `v9906' == 422
-		replace egp12 = 60 if `v9906' == 423
-		replace egp12 = 60 if `v9906' == 424
-		replace egp12 = 60 if `v9906' == 425
-		replace egp12 = 60 if `v9906' == 426
-		replace egp12 = 60 if `v9906' == 427
-		replace egp12 = 60 if `v9906' == 428
-		replace egp12 = 60 if `v9906' == 429
-		replace egp12 = 60 if `v9906' == 430
-		replace egp12 = 60 if `v9906' == 431
-		replace egp12 = 60 if `v9906' == 470
-		replace egp12 = 60 if `v9906' == 471
-		replace egp12 = 60 if `v9906' == 472
-		replace egp12 = 60 if `v9906' == 473
-		replace egp12 = 60 if `v9906' == 474
-		replace egp12 = 60 if `v9906' == 477
-		replace egp12 = 60 if `v9906' == 478
-		replace egp12 = 60 if `v9906' == 479
-		replace egp12 = 60 if `v9906' == 481
-		replace egp12 = 60 if `v9906' == 482
-		replace egp12 = 60 if `v9906' == 484
-		replace egp12 = 60 if `v9906' == 485
-		replace egp12 = 60 if `v9906' == 487
-		replace egp12 = 60 if `v9906' == 488
-		replace egp12 = 60 if `v9906' == 489
-		replace egp12 = 60 if `v9906' == 501
-		replace egp12 = 60 if `v9906' == 502
-		replace egp12 = 60 if `v9906' == 503
-		replace egp12 = 60 if `v9906' == 504
-		replace egp12 = 60 if `v9906' == 505
-		replace egp12 = 60 if `v9906' == 506
-		replace egp12 = 60 if `v9906' == 507
-		replace egp12 = 60 if `v9906' == 508
-		replace egp12 = 60 if `v9906' == 509
-		replace egp12 = 60 if `v9906' == 511
-		replace egp12 = 60 if `v9906' == 512
-		replace egp12 = 60 if `v9906' == 516
-		replace egp12 = 60 if `v9906' == 517
-		replace egp12 = 60 if `v9906' == 518
-		replace egp12 = 60 if `v9906' == 551
-		replace egp12 = 60 if `v9906' == 552
-		replace egp12 = 60 if `v9906' == 553
-		replace egp12 = 60 if `v9906' == 554
-		replace egp12 = 60 if `v9906' == 555
-		replace egp12 = 60 if `v9906' == 556
-		replace egp12 = 60 if `v9906' == 557
-		replace egp12 = 60 if `v9906' == 561
-		replace egp12 = 60 if `v9906' == 562
-		replace egp12 = 60 if `v9906' == 563
-		replace egp12 = 60 if `v9906' == 572
-		replace egp12 = 60 if `v9906' == 573
-		replace egp12 = 60 if `v9906' == 581
-		replace egp12 = 60 if `v9906' == 731
-		replace egp12 = 60 if `v9906' == 741
-		replace egp12 = 60 if `v9906' == 743
-		replace egp12 = 60 if `v9906' == 745
-		replace egp12 = 60 if `v9906' == 746
-		replace egp12 = 60 if `v9906' == 813
-		replace egp12 = 60 if `v9906' == 822
-		replace egp12 = 60 if `v9906' == 823
-		replace egp12 = 60 if `v9906' == 824
-		replace egp12 = 60 if `v9906' == 866
-		replace egp12 = 60 if `v9906' == 867
-		replace egp12 = 60 if `v9906' == 868
-		replace egp12 = 60 if `v9906' == 913
-		replace egp12 = 60 if `v9906' == 915
-		replace egp12 = 60 if `v9906' == 917
-		replace egp12 = 60 if `v9906' == 921
-		replace egp12 = 60 if `v9906' == 922
-
-		replace egp12 = 71 if `v9906' == 272
-		replace egp12 = 71 if `v9906' == 333
-		replace egp12 = 71 if `v9906' == 341
-		replace egp12 = 71 if `v9906' == 351
-		replace egp12 = 71 if `v9906' == 361
-		replace egp12 = 71 if `v9906' == 371
-		replace egp12 = 71 if `v9906' == 391
-		replace egp12 = 71 if `v9906' == 441
-		replace egp12 = 71 if `v9906' == 442
-		replace egp12 = 71 if `v9906' == 443
-		replace egp12 = 71 if `v9906' == 444
-		replace egp12 = 71 if `v9906' == 445
-		replace egp12 = 71 if `v9906' == 446
-		replace egp12 = 71 if `v9906' == 447
-		replace egp12 = 71 if `v9906' == 448
-		replace egp12 = 71 if `v9906' == 449
-		replace egp12 = 71 if `v9906' == 450
-		replace egp12 = 71 if `v9906' == 451
-		replace egp12 = 71 if `v9906' == 452
-		replace egp12 = 71 if `v9906' == 461
-		replace egp12 = 71 if `v9906' == 462
-		replace egp12 = 71 if `v9906' == 475
-		replace egp12 = 71 if `v9906' == 483
-		replace egp12 = 71 if `v9906' == 486
-		replace egp12 = 71 if `v9906' == 490
-		replace egp12 = 71 if `v9906' == 513
-		replace egp12 = 71 if `v9906' == 514
-		replace egp12 = 71 if `v9906' == 515
-		replace egp12 = 71 if `v9906' == 519
-		replace egp12 = 71 if `v9906' == 520
-		replace egp12 = 71 if `v9906' == 521
-		replace egp12 = 71 if `v9906' == 531
-		replace egp12 = 71 if `v9906' == 532
-		replace egp12 = 71 if `v9906' == 533
-		replace egp12 = 71 if `v9906' == 534
-		replace egp12 = 71 if `v9906' == 535
-		replace egp12 = 71 if `v9906' == 536
-		replace egp12 = 71 if `v9906' == 537
-		replace egp12 = 71 if `v9906' == 538
-		replace egp12 = 71 if `v9906' == 539
-		replace egp12 = 71 if `v9906' == 540
-		replace egp12 = 71 if `v9906' == 541
-		replace egp12 = 71 if `v9906' == 542
-		replace egp12 = 71 if `v9906' == 543
-		replace egp12 = 71 if `v9906' == 544
-		replace egp12 = 71 if `v9906' == 545
-		replace egp12 = 71 if `v9906' == 564
-		replace egp12 = 71 if `v9906' == 574
-		replace egp12 = 71 if `v9906' == 575
-		replace egp12 = 71 if `v9906' == 576
-		replace egp12 = 71 if `v9906' == 577
-		replace egp12 = 71 if `v9906' == 578
-		replace egp12 = 71 if `v9906' == 579
-		replace egp12 = 71 if `v9906' == 580
-		replace egp12 = 71 if `v9906' == 582
-		replace egp12 = 71 if `v9906' == 583
-		replace egp12 = 71 if `v9906' == 584
-		replace egp12 = 71 if `v9906' == 585
-		replace egp12 = 71 if `v9906' == 586
-		replace egp12 = 71 if `v9906' == 587
-		replace egp12 = 71 if `v9906' == 589
-		replace egp12 = 71 if `v9906' == 611
-		replace egp12 = 71 if `v9906' == 612
-		replace egp12 = 71 if `v9906' == 613
-		replace egp12 = 71 if `v9906' == 614
-		replace egp12 = 71 if `v9906' == 615
-		replace egp12 = 71 if `v9906' == 616
-		replace egp12 = 71 if `v9906' == 617
-		replace egp12 = 71 if `v9906' == 621
-		replace egp12 = 71 if `v9906' == 723
-		replace egp12 = 71 if `v9906' == 724
-		replace egp12 = 71 if `v9906' == 725
-		replace egp12 = 71 if `v9906' == 726
-		replace egp12 = 71 if `v9906' == 727
-		replace egp12 = 71 if `v9906' == 732
-		replace egp12 = 71 if `v9906' == 751
-		replace egp12 = 71 if `v9906' == 752
-		replace egp12 = 71 if `v9906' == 762
-		replace egp12 = 71 if `v9906' == 775
-		replace egp12 = 71 if `v9906' == 801
-		replace egp12 = 71 if `v9906' == 802
-		replace egp12 = 71 if `v9906' == 803
-		replace egp12 = 71 if `v9906' == 804
-		replace egp12 = 71 if `v9906' == 805
-		replace egp12 = 71 if `v9906' == 806
-		replace egp12 = 71 if `v9906' == 807
-		replace egp12 = 71 if `v9906' == 808
-		replace egp12 = 71 if `v9906' == 812
-		replace egp12 = 71 if `v9906' == 825
-		replace egp12 = 71 if `v9906' == 826
-		replace egp12 = 71 if `v9906' == 841
-		replace egp12 = 71 if `v9906' == 842
-		replace egp12 = 71 if `v9906' == 843
-		replace egp12 = 71 if `v9906' == 844
-		replace egp12 = 71 if `v9906' == 916
-		replace egp12 = 71 if `v9906' == 919
-		replace egp12 = 71 if `v9906' == 920
-		replace egp12 = 71 if `v9906' == 923
-		replace egp12 = 71 if `v9906' == 924
-		replace egp12 = 71 if `v9906' == 925
-		replace egp12 = 71 if `v9906' == 926
-
-		replace egp12 = 72 if `v9906' == 302
-		replace egp12 = 72 if `v9906' == 303
-		replace egp12 = 72 if `v9906' == 304
-		replace egp12 = 72 if `v9906' == 305
-		replace egp12 = 72 if `v9906' == 321
-		replace egp12 = 72 if `v9906' == 322
-		replace egp12 = 72 if `v9906' == 331
-		replace egp12 = 72 if `v9906' == 332
-		replace egp12 = 72 if `v9906' == 334
-		replace egp12 = 72 if `v9906' == 336
-		replace egp12 = 72 if `v9906' == 345
-		replace egp12 = 72 if `v9906' == 381
-		replace egp12 = 72 if `v9906' == 753
-
-
-		replace egp12 = 50 if `v9906' == 125
-		replace egp12 = 20 if `v9906' == 173
-		replace egp12 = 60 if `v9906' == 821
-		replace egp12 = 44 if `v9906' == 851
-
-		replace egp12 = 60 if `v9906' == 741
-		replace egp12 = 60 if `v9906' == 742
-
-		replace egp12 = 72 if `v9906' == 300
-
-		replace egp12 = 60 if `v9906' == 744
-
-		replace egp12 = 71 if `v9906' == 476
-		replace egp12 = 20 if `v9906' == 172
-
-		/* adicionando ocupação 133 (técnicos em meteorologia)  -- WM, copiado de pós-2002*/ 
-
-		replace egp12 = 32 if `v9906' == 133
-
-		* adicionando ocupação 161 (acadêmicos de hospital)
-
-		replace egp12 = 20 if `v9906' == 161
-
-		* adicionando ocupação 31 (administração na extração vegetal e pesca)
-
-		replace egp12 = 50 if `v9906' == 31
-
-		* adicionando ocupação 335 (ervateiros)
-
-		replace egp12 = 72 if `v9906' == 335
-
-
-		*******
-		* para classificar militares
-
-		replace egp12 = 31 if `v9906' == 861
-		replace egp12 = 71 if `v9906' == 862
-	}
-
-
-	}
-}
-
 *********************************************************************
 * 3 - Labels e recodes
 *********************************************************************
