@@ -1,5 +1,6 @@
 ********************************************** stata.toc
 v 3
-d CERES - IESP - UERJ
+d CERES /IESP-UERJ
+d Centro para o Estudo da Riqueza e Estratificação Social
 d 
 p classes_pnad [Programa para gerar classificações ocupacionais nas PNADS]
