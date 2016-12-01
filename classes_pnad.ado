@@ -3,8 +3,8 @@
 
 /// Weverthon Machado
 
-Versão 0.9.1
-Última alteração: 20/03/2016
+Versão 0.9.2
+Última alteração: 30/11/2016
 ---------------------------------------------------------------------*/
 capture program drop classes_pnad
 program define classes_pnad
@@ -21,7 +21,7 @@ syntax [namelist], ANO(integer)
 if "`namelist'" == "" {  /* Se nenhuma especificada, gera todas */
 	local egp12 egp12
 	local egp7 egp7
-	local nvs18 nvs18
+	local nvs nvs
 	local egps egps
 }
 
@@ -793,7 +793,7 @@ if `ano'>2001 {
 * 2 - EGP
 **********************************************************************/
 
-if "`egp12'" != ""  |  "`egp7'" != "" |  "`egp'" != ""{
+if "`egp12'" != ""  |  "`egp7'" != "" |  "`egp'" != "" |  "`egps'" != ""{
 	quietly {
 
 	noisily di "Criando classes EGP..."		
@@ -1301,11 +1301,464 @@ if "`egp12'" != ""  |  "`egp7'" != "" |  "`egp'" != ""{
 	}
 	}
 }
-	
+
 /*********************************************************************
-* 3 - Labels e recodes
+* 3 - NVS
 **********************************************************************/
 
+if "`nvs'" != ""  |  "`nvs18'" != "" |  "`egps'" != "" {
+	quietly {
+
+	noisily di "Criando classes NVS..."		
+	gen nvs=.
+	lab var nvs "Classificação ocupacional NVS - 18 categorias"
+
+
+	replace nvs = 1 if `ocupacao' == 101
+	replace nvs = 1 if `ocupacao' == 102
+	replace nvs = 1 if `ocupacao' == 151
+	replace nvs = 1 if `ocupacao' == 181
+	replace nvs = 1 if `ocupacao' == 211
+	replace nvs = 1 if `ocupacao' == 212
+	replace nvs = 1 if `ocupacao' == 231
+	replace nvs = 1 if `ocupacao' == 232
+	replace nvs = 1 if `ocupacao' == 233
+
+	replace nvs = 2 if `ocupacao' == 20
+	replace nvs = 2 if `ocupacao' == 21
+	replace nvs = 2 if `ocupacao' == 33
+	replace nvs = 2 if `ocupacao' == 34
+	replace nvs = 2 if `ocupacao' == 35
+	replace nvs = 2 if `ocupacao' == 36
+	replace nvs = 2 if `ocupacao' == 37
+	replace nvs = 2 if `ocupacao' == 38
+	replace nvs = 2 if `ocupacao' == 39
+	replace nvs = 2 if `ocupacao' == 40
+
+	replace nvs = 3 if `ocupacao' == 121
+	replace nvs = 3 if `ocupacao' == 122
+	replace nvs = 3 if `ocupacao' == 123
+	replace nvs = 3 if `ocupacao' == 124
+	replace nvs = 3 if `ocupacao' == 141
+	replace nvs = 3 if `ocupacao' == 142
+	replace nvs = 3 if `ocupacao' == 143
+	replace nvs = 3 if `ocupacao' == 144
+	replace nvs = 3 if `ocupacao' == 152
+	replace nvs = 3 if `ocupacao' == 153
+	replace nvs = 3 if `ocupacao' == 154
+	replace nvs = 3 if `ocupacao' == 173
+	replace nvs = 3 if `ocupacao' == 182
+	replace nvs = 3 if `ocupacao' == 183
+	replace nvs = 3 if `ocupacao' == 201
+	replace nvs = 3 if `ocupacao' == 202
+	replace nvs = 3 if `ocupacao' == 203
+	replace nvs = 3 if `ocupacao' == 204
+	replace nvs = 3 if `ocupacao' == 205
+	replace nvs = 3 if `ocupacao' == 213
+	replace nvs = 3 if `ocupacao' == 214
+	replace nvs = 3 if `ocupacao' == 291
+	replace nvs = 3 if `ocupacao' == 292
+	replace nvs = 3 if `ocupacao' == 711
+	replace nvs = 3 if `ocupacao' == 864
+
+	replace nvs = 4 if `ocupacao' == 50
+	replace nvs = 4 if `ocupacao' == 51
+	replace nvs = 4 if `ocupacao' == 52
+	replace nvs = 4 if `ocupacao' == 241
+	replace nvs = 4 if `ocupacao' == 242
+	replace nvs = 4 if `ocupacao' == 244
+	replace nvs = 4 if `ocupacao' == 631   
+	replace nvs = 4 if `ocupacao' == 632   
+	replace nvs = 4 if `ocupacao' == 633   
+	replace nvs = 4 if `ocupacao' == 641   
+	replace nvs = 4 if `ocupacao' == 642   
+	replace nvs = 4 if `ocupacao' == 643   
+	replace nvs = 4 if `ocupacao' == 644   
+	replace nvs = 4 if `ocupacao' == 645   
+	replace nvs = 4 if `ocupacao' == 646   
+
+	replace nvs = 5 if `ocupacao' == 53  
+	replace nvs = 5 if `ocupacao' == 54  
+	replace nvs = 5 if `ocupacao' == 55  
+	replace nvs = 5 if `ocupacao' == 56  
+	replace nvs = 5 if `ocupacao' == 57  
+	replace nvs = 5 if `ocupacao' == 58  
+	replace nvs = 5 if `ocupacao' == 59  
+	replace nvs = 5 if `ocupacao' == 60  
+	replace nvs = 5 if `ocupacao' == 61  
+	replace nvs = 5 if `ocupacao' == 62  
+	replace nvs = 5 if `ocupacao' == 63  
+	replace nvs = 5 if `ocupacao' == 64  
+	replace nvs = 5 if `ocupacao' == 243  
+	replace nvs = 5 if `ocupacao' == 771  
+	replace nvs = 5 if `ocupacao' == 772  
+	replace nvs = 5 if `ocupacao' == 773  
+
+	replace nvs = 6 if `ocupacao' == 7  
+	replace nvs = 6 if `ocupacao' == 8  
+	replace nvs = 6 if `ocupacao' == 9  
+	replace nvs = 6 if `ocupacao' == 10  
+	replace nvs = 6 if `ocupacao' == 11  
+	replace nvs = 6 if `ocupacao' == 12  
+	replace nvs = 6 if `ocupacao' == 15  
+
+	replace nvs = 7 if `ocupacao' == 601  
+	replace nvs = 7 if `ocupacao' == 811 
+	replace nvs = 7 if `ocupacao' == 852  
+
+	replace nvs = 8 if `ocupacao' == 103 
+	replace nvs = 8 if `ocupacao' == 104 
+	replace nvs = 8 if `ocupacao' == 111 
+	replace nvs = 8 if `ocupacao' == 112 
+	replace nvs = 8 if `ocupacao' == 113 
+	replace nvs = 8 if `ocupacao' == 131 
+	replace nvs = 8 if `ocupacao' == 132 
+	replace nvs = 8 if `ocupacao' == 162 
+	replace nvs = 8 if `ocupacao' == 163 
+	replace nvs = 8 if `ocupacao' == 164 
+	replace nvs = 8 if `ocupacao' == 165 
+	replace nvs = 8 if `ocupacao' == 167 
+	replace nvs = 8 if `ocupacao' == 168 
+	replace nvs = 8 if `ocupacao' == 191 
+	replace nvs = 8 if `ocupacao' == 192 
+	replace nvs = 8 if `ocupacao' == 193 
+	replace nvs = 8 if `ocupacao' == 194 
+	replace nvs = 8 if `ocupacao' == 215 
+	replace nvs = 8 if `ocupacao' == 216 
+	replace nvs = 8 if `ocupacao' == 217 
+	replace nvs = 8 if `ocupacao' == 218 
+	replace nvs = 8 if `ocupacao' == 219 
+	replace nvs = 8 if `ocupacao' == 220 
+	replace nvs = 8 if `ocupacao' == 221 
+	replace nvs = 8 if `ocupacao' == 222 
+	replace nvs = 8 if `ocupacao' == 251 
+	replace nvs = 8 if `ocupacao' == 252 
+	replace nvs = 8 if `ocupacao' == 261 
+	replace nvs = 8 if `ocupacao' == 271 
+	replace nvs = 8 if `ocupacao' == 273 
+	replace nvs = 8 if `ocupacao' == 274 
+	replace nvs = 8 if `ocupacao' == 275 
+	replace nvs = 8 if `ocupacao' == 276 
+	replace nvs = 8 if `ocupacao' == 277 
+	replace nvs = 8 if `ocupacao' == 278 
+	replace nvs = 8 if `ocupacao' == 279 
+	replace nvs = 8 if `ocupacao' == 280 
+	replace nvs = 8 if `ocupacao' == 281 
+	replace nvs = 8 if `ocupacao' == 282 
+	replace nvs = 8 if `ocupacao' == 293 
+	replace nvs = 8 if `ocupacao' == 402 
+	replace nvs = 8 if `ocupacao' == 403 
+	replace nvs = 8 if `ocupacao' == 404 
+	replace nvs = 8 if `ocupacao' == 405 
+	replace nvs = 8 if `ocupacao' == 406 
+	replace nvs = 8 if `ocupacao' == 571 
+	replace nvs = 8 if `ocupacao' == 588 
+	replace nvs = 8 if `ocupacao' == 602 
+	replace nvs = 8 if `ocupacao' == 603 
+	replace nvs = 8 if `ocupacao' == 604 
+	replace nvs = 8 if `ocupacao' == 605 
+	replace nvs = 8 if `ocupacao' == 712 
+	replace nvs = 8 if `ocupacao' == 721 
+	replace nvs = 8 if `ocupacao' == 761 
+	replace nvs = 8 if `ocupacao' == 834 
+	replace nvs = 8 if `ocupacao' == 861 
+	replace nvs = 8 if `ocupacao' == 862 
+	replace nvs = 8 if `ocupacao' == 863 
+	replace nvs = 8 if `ocupacao' == 865 
+	replace nvs = 8 if `ocupacao' == 866 
+	replace nvs = 8 if `ocupacao' == 867 
+	replace nvs = 8 if `ocupacao' == 868 
+	replace nvs = 8 if `ocupacao' == 914 
+	replace nvs = 8 if `ocupacao' == 918 
+
+	replace nvs = 9 if `ocupacao' == 361 
+	replace nvs = 9 if `ocupacao' == 391 
+	replace nvs = 9 if `ocupacao' == 411 
+	replace nvs = 9 if `ocupacao' == 412 
+	replace nvs = 9 if `ocupacao' == 413 
+	replace nvs = 9 if `ocupacao' == 414 
+	replace nvs = 9 if `ocupacao' == 415 
+	replace nvs = 9 if `ocupacao' == 416 
+	replace nvs = 9 if `ocupacao' == 417 
+	replace nvs = 9 if `ocupacao' == 418 
+	replace nvs = 9 if `ocupacao' == 419 
+	replace nvs = 9 if `ocupacao' == 420 
+	replace nvs = 9 if `ocupacao' == 421 
+	replace nvs = 9 if `ocupacao' == 422 
+	replace nvs = 9 if `ocupacao' == 423 
+	replace nvs = 9 if `ocupacao' == 424 
+	replace nvs = 9 if `ocupacao' == 425 
+	replace nvs = 9 if `ocupacao' == 426 
+	replace nvs = 9 if `ocupacao' == 427 
+	replace nvs = 9 if `ocupacao' == 428 
+	replace nvs = 9 if `ocupacao' == 429 
+	replace nvs = 9 if `ocupacao' == 430 
+	replace nvs = 9 if `ocupacao' == 431 
+	replace nvs = 9 if `ocupacao' == 501 
+	replace nvs = 9 if `ocupacao' == 502 
+	replace nvs = 9 if `ocupacao' == 503 
+	replace nvs = 9 if `ocupacao' == 504 
+	replace nvs = 9 if `ocupacao' == 505 
+	replace nvs = 9 if `ocupacao' == 506 
+	replace nvs = 9 if `ocupacao' == 507 
+	replace nvs = 9 if `ocupacao' == 508 
+	replace nvs = 9 if `ocupacao' == 509 
+	replace nvs = 9 if `ocupacao' == 551 
+	replace nvs = 9 if `ocupacao' == 552 
+	replace nvs = 9 if `ocupacao' == 553 
+	replace nvs = 9 if `ocupacao' == 554 
+	replace nvs = 9 if `ocupacao' == 555 
+	replace nvs = 9 if `ocupacao' == 556 
+	replace nvs = 9 if `ocupacao' == 557 
+
+	replace nvs = 10 if `ocupacao' == 441 
+	replace nvs = 10 if `ocupacao' == 442 
+	replace nvs = 10 if `ocupacao' == 443 
+	replace nvs = 10 if `ocupacao' == 445 
+	replace nvs = 10 if `ocupacao' == 446 
+	replace nvs = 10 if `ocupacao' == 447 
+	replace nvs = 10 if `ocupacao' == 450 
+	replace nvs = 10 if `ocupacao' == 451 
+	replace nvs = 10 if `ocupacao' == 452 
+	replace nvs = 10 if `ocupacao' == 461 
+	replace nvs = 10 if `ocupacao' == 462 
+	replace nvs = 10 if `ocupacao' == 470 
+	replace nvs = 10 if `ocupacao' == 471 
+	replace nvs = 10 if `ocupacao' == 472 
+	replace nvs = 10 if `ocupacao' == 473 
+	replace nvs = 10 if `ocupacao' == 477
+	replace nvs = 10 if `ocupacao' == 478 
+	replace nvs = 10 if `ocupacao' == 479 
+	replace nvs = 10 if `ocupacao' == 481 
+	replace nvs = 10 if `ocupacao' == 482 
+	replace nvs = 10 if `ocupacao' == 483 
+	replace nvs = 10 if `ocupacao' == 484 
+	replace nvs = 10 if `ocupacao' == 485 
+	replace nvs = 10 if `ocupacao' == 486 
+	replace nvs = 10 if `ocupacao' == 487 
+	replace nvs = 10 if `ocupacao' == 488 
+	replace nvs = 10 if `ocupacao' == 489 
+	replace nvs = 10 if `ocupacao' == 511 
+	replace nvs = 10 if `ocupacao' == 512 
+	replace nvs = 10 if `ocupacao' == 513 
+	replace nvs = 10 if `ocupacao' == 514 
+	replace nvs = 10 if `ocupacao' == 515 
+	replace nvs = 10 if `ocupacao' == 516 
+	replace nvs = 10 if `ocupacao' == 517 
+	replace nvs = 10 if `ocupacao' == 518 
+	replace nvs = 10 if `ocupacao' == 519 
+	replace nvs = 10 if `ocupacao' == 520 
+	replace nvs = 10 if `ocupacao' == 521 
+	replace nvs = 10 if `ocupacao' == 531 
+	replace nvs = 10 if `ocupacao' == 532 
+	replace nvs = 10 if `ocupacao' == 533 
+	replace nvs = 10 if `ocupacao' == 534 
+	replace nvs = 10 if `ocupacao' == 535 
+	replace nvs = 10 if `ocupacao' == 536 
+	replace nvs = 10 if `ocupacao' == 537 
+	replace nvs = 10 if `ocupacao' == 538 
+	replace nvs = 10 if `ocupacao' == 539 
+	replace nvs = 10 if `ocupacao' == 540 
+	replace nvs = 10 if `ocupacao' == 541 
+	replace nvs = 10 if `ocupacao' == 542 
+	replace nvs = 10 if `ocupacao' == 543 
+	replace nvs = 10 if `ocupacao' == 544 
+	replace nvs = 10 if `ocupacao' == 545 
+	replace nvs = 10 if `ocupacao' == 561 
+	replace nvs = 10 if `ocupacao' == 562 
+	replace nvs = 10 if `ocupacao' == 563 
+	replace nvs = 10 if `ocupacao' == 564 
+	replace nvs = 10 if `ocupacao' == 572 
+	replace nvs = 10 if `ocupacao' == 573 
+	replace nvs = 10 if `ocupacao' == 574 
+	replace nvs = 10 if `ocupacao' == 575 
+	replace nvs = 10 if `ocupacao' == 576 
+	replace nvs = 10 if `ocupacao' == 577 
+	replace nvs = 10 if `ocupacao' == 578 
+	replace nvs = 10 if `ocupacao' == 579 
+	replace nvs = 10 if `ocupacao' == 580 
+	replace nvs = 10 if `ocupacao' == 581 
+	replace nvs = 10 if `ocupacao' == 582 
+	replace nvs = 10 if `ocupacao' == 583 
+	replace nvs = 10 if `ocupacao' == 584 
+	replace nvs = 10 if `ocupacao' == 585 
+	replace nvs = 10 if `ocupacao' == 586 
+	replace nvs = 10 if `ocupacao' == 587 
+	replace nvs = 10 if `ocupacao' == 589 
+	replace nvs = 10 if `ocupacao' == 762 
+	replace nvs = 10 if `ocupacao' == 923 
+	replace nvs = 10 if `ocupacao' == 925 
+
+	replace nvs = 11 if `ocupacao' == 166 
+	replace nvs = 11 if `ocupacao' == 283 
+	replace nvs = 11 if `ocupacao' == 722 
+	replace nvs = 11 if `ocupacao' == 723 
+	replace nvs = 11 if `ocupacao' == 724 
+	replace nvs = 11 if `ocupacao' == 725 
+	replace nvs = 11 if `ocupacao' == 726 
+	replace nvs = 11 if `ocupacao' == 727 
+	replace nvs = 11 if `ocupacao' == 731 
+	replace nvs = 11 if `ocupacao' == 732 
+	replace nvs = 11 if `ocupacao' == 741
+	replace nvs = 11 if `ocupacao' == 743 
+	replace nvs = 11 if `ocupacao' == 745 
+	replace nvs = 11 if `ocupacao' == 746 
+	replace nvs = 11 if `ocupacao' == 751 
+	replace nvs = 11 if `ocupacao' == 752 
+	replace nvs = 11 if `ocupacao' == 774 
+	replace nvs = 11 if `ocupacao' == 775 
+	replace nvs = 11 if `ocupacao' == 812 
+	replace nvs = 11 if `ocupacao' == 813 
+	replace nvs = 11 if `ocupacao' == 814 
+	replace nvs = 11 if `ocupacao' == 815 
+	replace nvs = 11 if `ocupacao' == 816 
+	replace nvs = 11 if `ocupacao' == 817 
+	replace nvs = 11 if `ocupacao' == 818 
+	replace nvs = 11 if `ocupacao' == 821 
+	replace nvs = 11 if `ocupacao' == 822 
+	replace nvs = 11 if `ocupacao' == 823 
+	replace nvs = 11 if `ocupacao' == 824 
+	replace nvs = 11 if `ocupacao' == 831 
+	replace nvs = 11 if `ocupacao' == 832 
+	replace nvs = 11 if `ocupacao' == 833 
+	replace nvs = 11 if `ocupacao' == 845 
+	replace nvs = 11 if `ocupacao' == 911 
+	replace nvs = 11 if `ocupacao' == 912 
+	replace nvs = 11 if `ocupacao' == 913 
+	replace nvs = 11 if `ocupacao' == 915 
+	replace nvs = 11 if `ocupacao' == 916 
+	replace nvs = 11 if `ocupacao' == 917 
+	replace nvs = 11 if `ocupacao' == 920 
+	replace nvs = 11 if `ocupacao' == 921 
+	replace nvs = 11 if `ocupacao' == 922 
+
+	replace nvs = 12 if `ocupacao' == 801 
+	replace nvs = 12 if `ocupacao' == 802 
+	replace nvs = 12 if `ocupacao' == 803 
+	replace nvs = 12 if `ocupacao' == 804 
+	replace nvs = 12 if `ocupacao' == 805 
+	replace nvs = 12 if `ocupacao' == 806 
+	replace nvs = 12 if `ocupacao' == 807 
+	replace nvs = 12 if `ocupacao' == 808 
+	replace nvs = 12 if `ocupacao' == 825 
+	replace nvs = 12 if `ocupacao' == 841 
+	replace nvs = 12 if `ocupacao' == 842 
+	replace nvs = 12 if `ocupacao' == 843 
+	replace nvs = 12 if `ocupacao' == 844 
+	replace nvs = 12 if `ocupacao' == 869 
+	replace nvs = 12 if `ocupacao' == 919 
+	replace nvs = 12 if `ocupacao' == 926 
+
+	replace nvs = 13 if `ocupacao' == 13 
+	replace nvs = 13 if `ocupacao' == 611 
+	replace nvs = 13 if `ocupacao' == 612 
+	replace nvs = 13 if `ocupacao' == 613 
+	replace nvs = 13 if `ocupacao' == 614 
+	replace nvs = 13 if `ocupacao' == 615 
+	replace nvs = 13 if `ocupacao' == 616 
+	replace nvs = 13 if `ocupacao' == 617 
+	replace nvs = 13 if `ocupacao' == 621 
+	replace nvs = 13 if `ocupacao' == 826 
+
+	replace nvs = 14 if `ocupacao' == 8
+	replace nvs = 14 if `ocupacao' == 142 
+	replace nvs = 14 if `ocupacao' == 272 
+	replace nvs = 14 if `ocupacao' == 444 
+	replace nvs = 14 if `ocupacao' == 448 
+	replace nvs = 14 if `ocupacao' == 449 
+	replace nvs = 14 if `ocupacao' == 474
+	replace nvs = 14 if `ocupacao' == 475 
+	replace nvs = 14 if `ocupacao' == 490 
+
+	replace nvs = 15 if `ocupacao' == 1
+	replace nvs = 15 if `ocupacao' == 2
+	replace nvs = 15 if `ocupacao' == 3
+	replace nvs = 15 if `ocupacao' == 4
+	replace nvs = 15 if `ocupacao' == 5
+	replace nvs = 15 if `ocupacao' == 6 
+
+	replace nvs = 16 if `ocupacao' == 30
+	replace nvs = 16 if `ocupacao' == 32
+	replace nvs = 16 if `ocupacao' == 302
+	replace nvs = 16 if `ocupacao' == 303
+	replace nvs = 16 if `ocupacao' == 351
+	replace nvs = 16 if `ocupacao' == 401
+
+	replace nvs = 17 if `ocupacao' == 301
+
+	replace nvs = 18 if `ocupacao' == 304
+	replace nvs = 18 if `ocupacao' == 305
+	replace nvs = 18 if `ocupacao' == 321
+	replace nvs = 18 if `ocupacao' == 322
+	replace nvs = 18 if `ocupacao' == 331
+	replace nvs = 18 if `ocupacao' == 332
+	replace nvs = 18 if `ocupacao' == 333
+	replace nvs = 18 if `ocupacao' == 334
+	replace nvs = 18 if `ocupacao' == 336
+	replace nvs = 18 if `ocupacao' == 341
+	replace nvs = 18 if `ocupacao' == 345
+	replace nvs = 18 if `ocupacao' == 371
+	replace nvs = 18 if `ocupacao' == 381
+	replace nvs = 18 if `ocupacao' == 753
+	replace nvs = 18 if `ocupacao' == 924
+
+	replace nvs = 13 if `ocupacao' == 14
+	replace nvs = 18 if `ocupacao' == 300
+	replace nvs = 9 if `ocupacao' == 744
+	replace nvs = 9 if `ocupacao' == 742
+
+	replace nvs = 8 if `ocupacao' == 125
+	replace nvs = 17 if `ocupacao' == 851
+
+	replace nvs = 14 if `ocupacao' == 476
+	replace nvs = 3 if `ocupacao' == 172
+	} 
+
+}
+
+/*********************************************************************
+* 4 - EGPS
+**********************************************************************/
+
+if "`egps'" != ""  {
+
+	quietly {
+
+	noisily di "Criando classes EGPS..."		
+	gen egps=egp12*10
+	lab var egps "EGPS (EGP + NVS) - 19 categorias"
+
+	replace egps = 711 if nvs <= 10 & egp12 == 71
+	replace egps = 712 if nvs == 11 & egp12 == 71
+	replace egps = 713 if nvs == 12 & egp12 == 71
+	replace egps = 714 if nvs == 13 & egp12 == 71
+	replace egps = 714 if nvs == 14 & egp12 == 71
+	replace egps = 711 if nvs == 16 & egp12 == 71
+	replace egps = 711 if nvs == 18 & egp12 == 71
+	replace egps = 601 if nvs == 8 & egp12 == 60
+	replace egps = 601 if nvs == 9 & egp12 == 60
+	replace egps = 602 if nvs == 10 & egp12 == 60
+	replace egps = 603 if nvs == 11 & egp12 == 60
+	replace egps = 603 if nvs == 14 & egp12 == 60
+
+	replace egps = 311 if nvs <= 6 & egp12 == 31
+	replace egps = 312 if nvs >= 8 & egp12 == 31
+
+	replace egps = 321 if nvs == 4 & egp12 == 32
+	replace egps = 321 if nvs == 5 & egp12 == 32
+	replace egps = 321 if nvs == 8 & egp12 == 32
+	replace egps = 322 if nvs == 11 & egp12 == 32
+	replace egps = 322 if nvs == 12 & egp12 == 32
+
+	}
+}
+
+
+/*********************************************************************
+* X - Labels e recodes
+**********************************************************************/
+
+*EGP
 if "`egp12'" != ""  |  "`egp'" != "" | "`egp7'" != ""{
 	#delimit ;
 	capture label define egp12
@@ -1325,6 +1778,64 @@ if "`egp12'" != ""  |  "`egp'" != "" | "`egp7'" != ""{
 	#delimit cr
 
 	lab val egp12 egp12
+}
+
+*NVS
+if "`nvs'" != "" | "`nvs18'" != ""{
+	#delimit ;
+	capture label define nvs
+	1 "1 - Profissionais liberais"  
+	2 "2 - Dirigentes e administradores de alto nível"
+	3 "3 - Profissionais"
+	4 "4 - Funções administrativas execução"
+	5 "5 - Não-manual de rotina e funções de escritório"
+	6 "6 - Proprietários empregador na ind, com e serv"
+	7 "7 - Empresários por conta própria sem empregados"
+	8 "8 - Técnicos, artistas e superv do trabalho manual"
+	9 "9 - Trabalhadores manuais em indústrias modernas"
+	10 "10 - Traba manuais em indústrias tradicionais"
+	11 "11 - Trabalhadores manuais em serviços em geral"
+	12 "12 - Trabalhadores no serviço doméstico"
+	13 "13 - Vendedores ambulantes"
+	14 "14 - Artesãos"
+	15 "15 - Proprietários empregadores no setor primário"
+	16 "16 - Técnicos e administradores no setor primário"
+	17 "17 - Produtores agrícolas autônomos"
+	18 "18 - Trabalhadores rurais"
+	;
+	#delimit cr
+
+	lab val nvs nvs
+}
+
+* EGPS
+if "`egps'" != "" {
+
+	#delimit ;
+	capture label define egps
+	100 "I - Prof e Adm, nível alto"
+	200 "II - Prof e Adm, nível baixo"
+	311 "IIIa1 - Não-manual rotina, nível alto escritório"
+	312 "IIIa2 - Não-manual rotina, nível alto supervisão"
+	321 "IIIb1 - Não-manual rotina, nível baixo escritório"
+	322 "IIIb2 - Não-manual rotina, nível baixo serviços"
+	410 "IVa - Pequenos Propriet., empregadores"
+	420 "IVb - Pequenos Propriet., sem empregados"
+	430 "IVc2 - Pequenos Prop. rurais, sem empregados"
+	440 "IVc1 - Pequenos Prop. rurais, com empregados"
+	500 "V - Técnicos e supervisores do Trab. Manual"
+	601 "VIa - Trabalhadores Manuais Qualif., Ind. Moderna"
+	602 "VIb - Trabalhadores Manuais Qualif., Ind. Tradicional"
+	603 "VIc - Trabalhadores Manuais Qualif., Serviços"
+	711 "VIIa1 - Trabalhadores Manuais Não-qualif., Industria"
+	712 "VIIa2 - Trabalhadores Manuais Não-qualif., Serviços"
+	713 "VIIa3 - Trabalhadores Manuais Não-qualif., Serv Domest"
+	714 "VIIa4 - Trabalhadores Manuais Não-qualif., Ambulantes"
+	720 "VIIb - Trabalhadores Manuais Rurais"
+	;
+	#delimit cr
+
+	lab val egps egps
 }
 
 end
