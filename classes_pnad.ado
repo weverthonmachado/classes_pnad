@@ -3,8 +3,8 @@
 
 /// Weverthon Machado
 
-Versão 0.9.2
-Última alteração: 30/11/2016
+Versão 0.9.3
+Última alteração: 03/12/2016
 ---------------------------------------------------------------------*/
 capture program drop classes_pnad
 program define classes_pnad
@@ -776,6 +776,33 @@ if `ano'>2001 {
 	replace `ibge90' = 272 if `v9906' == 2625 & `v9907' == 20000
 	replace `ibge90' = 272 if `v9906' == 2625 & `v9907' == 26091
 	replace `ibge90' = 303 if `v9906' == 7825 & `v4808' == 1 & `v9907' < 1402
+
+	* Dezemmbro de 2016:
+
+		*ocupações sem equivalência até aqui
+
+	replace `ibge90' = 276 if `v9906' == 3765
+	replace `ibge90' = 912 if `v9906' == 4213
+	replace `ibge90' = 645 if `v9906' == 5114
+	replace `ibge90' = 802 if `v9906' == 5166
+	replace `ibge90' = 293 if `v9906' == 5167
+	replace `ibge90' = 613 if `v9906' == 5191
+	replace `ibge90' = 613 if `v9906' == 5192
+	replace `ibge90' = 843 if `v9906' == 5198
+	replace `ibge90' = 843 if `v9906' == 5199
+	replace `ibge90' = 428 if `v9906' == 7246
+	replace `ibge90' = 589 if `v9906' == 7817
+	replace `ibge90' = 589 if `v9906' == 8181
+	replace `ibge90' = 583 if `v9906' == 8711
+
+		*militares (retiramos da sintaxe original, na qual a correspondencia no ibge90_ocup1 era 863 e não conseguia correspondencia no isei)
+
+	replace `ibge90' = 861 if `v9906' == 501
+	replace `ibge90' = 861 if `v9906' == 502
+	replace `ibge90' = 864 if `v9906' == 503
+	replace `ibge90' = 864 if `v9906' == 511
+	replace `ibge90' = 864 if `v9906' == 512
+	replace `ibge90' = 869 if `v9906' == 513
 	
 
 	/*--------------------------------------------------------------------
