@@ -1,14 +1,10 @@
 ********************************************** classes_pnad.pkg
 v 3
 d classes_pnad
-d Classificações ocupacionais nas PNADS
+d Classificações ocupacionais nas PNADs
 d
-d Este utilitário crias diversas classificações ocupacionais nas PNADs. 
-d Atualmente, são suportadas as Pnads de 1981 a 2014 e as seguintes classificações:
-d - egp12: Erikson, Goldthorpe e Portocarrero (12 classes), também conhecido como esquema Casmin
-d - nvs18: Classificação de Nelson do Valle Silva
-d - egps: combinação do esquema EGP com o de Nelson do Valle Silva
 d 
-d Versão 0.9.2
-d Distribution-Date: 30nov2016
+d Versao 0.9.9
+d Distribution-Date: 04dec2016
 f classes_pnad.ado
+F classes_pnad_base.do

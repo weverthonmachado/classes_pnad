@@ -150,5 +150,3 @@ CERES - Centro para o Estudo da Riqueza e Estratificação Social
 IESP/UERJ - Instituto de Estudos Sociais e Políticos / Universidade do Estado do Rio de Janeiro
 {browse "http://ceres.iesp.uerj.br":ceres.iesp.uerj.br}
 {browse "mailto:ceres@ceres.iesp.uerj.br":ceres@ceres.iesp.uerj.br}
-
-Ver também: {help datazoom_ecinf}

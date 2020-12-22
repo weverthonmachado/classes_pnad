@@ -4,11 +4,11 @@
 /// Weverthon Machado
 
 - Este arquivo define o programa, processa argumentos e cria as macros 
-(locals) que contem os nomes reais das variaveis. A convers„o e codificacao 
+(locals) que contem os nomes reais das variaveis. A convers√£o e codificacao 
 sao feitas atraves do arquivo classes_pnad_base.do
 
-Vers„o 0.9.9
-⁄ltima alteraÁ„o: 04/12/2016
+Vers√£o 0.9.9
+√öltima altera√ß√£o: 04/12/2016
 ---------------------------------------------------------------------*/
 capture program drop classes_pnad
 program define classes_pnad
@@ -18,7 +18,7 @@ syntax [namelist], ANO(integer) [MOBilidade INTermediaria]
 
 
 /*********************************************************************
-* 0 - ConfiguraÁıes e labels
+* 0 - Configura√ß√µes e labels
 **********************************************************************/
 
 	/*--------------------------------------------------------------------
@@ -35,14 +35,14 @@ syntax [namelist], ANO(integer) [MOBilidade INTermediaria]
 	if "`namelist'" != "" {
 		tokenize `namelist'
 		
-		* Argumento È v·lido?
+		* Argumento √© v√°lido?
 		local validos "egp egp7 egp12 egps nvs nvs18"
 		local nargs: list sizeof namelist
 		forvalues x = 1/`nargs' {
 			if `: list `x' in validos'{
 			}
 			else {
-				di as error "Erro: '``x''' n„o È uma classificaÁ„o v·lida."
+				di as error "Erro: '``x''' n√£o √© uma classifica√ß√£o v√°lida."
 				exit
 			}
 		} 
@@ -76,7 +76,7 @@ syntax [namelist], ANO(integer) [MOBilidade INTermediaria]
 		20 "II - Lower-grade Prof & Adm "
 		31 "IIIa - Higher-grade Routine non-manual"
 		41 "IVa - Small proprietors, with employees"
-		42 "IVb - Small proprietors, without employees"
+		42 "IVb - Small proprietors, workithout employees"
 		32 "IIIb -Lower-grade Routine non-manual work"                                  
 		50 "V - Technicians and superv. manual work"
 		60 "VI - Skilled manual workers"
@@ -93,22 +93,22 @@ syntax [namelist], ANO(integer) [MOBilidade INTermediaria]
 		#delimit ;
 		capture label define nvs
 		1 "1 - Profissionais liberais"  
-		2 "2 - Dirigentes e administradores de alto nÌvel"
+		2 "2 - Dirigentes e administradores de alto n√≠vel"
 		3 "3 - Profissionais"
-		4 "4 - FunÁıes administrativas execuÁ„o"
-		5 "5 - N„o-manual de rotina e funÁıes de escritÛrio"
-		6 "6 - Propriet·rios empregador na ind, com e serv"
-		7 "7 - Empres·rios por conta prÛpria sem empregados"
-		8 "8 - TÈcnicos, artistas e superv do trabalho manual"
-		9 "9 - Trabalhadores manuais em ind˙strias modernas"
-		10 "10 - Traba manuais em ind˙strias tradicionais"
-		11 "11 - Trabalhadores manuais em serviÁos em geral"
-		12 "12 - Trabalhadores no serviÁo domÈstico"
+		4 "4 - Fun√ß√µes administrativas execu√ß√£o"
+		5 "5 - N√£o-manual de rotina e fun√ß√µes de escrit√≥rio"
+		6 "6 - Propriet√°rios empregador na ind, com e serv"
+		7 "7 - Empres√°rios por conta pr√≥pria sem empregados"
+		8 "8 - T√©cnicos, artistas e superv do trabalho manual"
+		9 "9 - Trabalhadores manuais em ind√∫strias modernas"
+		10 "10 - Traba manuais em ind√∫strias tradicionais"
+		11 "11 - Trabalhadores manuais em servi√ßos em geral"
+		12 "12 - Trabalhadores no servi√ßo dom√©stico"
 		13 "13 - Vendedores ambulantes"
-		14 "14 - Artes„os"
-		15 "15 - Propriet·rios empregadores no setor prim·rio"
-		16 "16 - TÈcnicos e administradores no setor prim·rio"
-		17 "17 - Produtores agrÌcolas autÙnomos"
+		14 "14 - Artes√£os"
+		15 "15 - Propriet√°rios empregadores no setor prim√°rio"
+		16 "16 - T√©cnicos e administradores no setor prim√°rio"
+		17 "17 - Produtores agr√≠colas aut√¥nomos"
 		18 "18 - Trabalhadores rurais"
 		;
 		#delimit cr
@@ -118,24 +118,24 @@ syntax [namelist], ANO(integer) [MOBilidade INTermediaria]
 	if "`egps'" != "" {
 		#delimit ;
 		capture label define egps
-		100 "I - Prof e Adm, nÌvel alto"
-		200 "II - Prof e Adm, nÌvel baixo"
-		311 "IIIa1 - N„o-manual rotina, nÌvel alto escritÛrio"
-		312 "IIIa2 - N„o-manual rotina, nÌvel alto supervis„o"
-		321 "IIIb1 - N„o-manual rotina, nÌvel baixo escritÛrio"
-		322 "IIIb2 - N„o-manual rotina, nÌvel baixo serviÁos"
+		100 "I - Prof e Adm, n√≠vel alto"
+		200 "II - Prof e Adm, n√≠vel baixo"
+		311 "IIIa1 - N√£o-manual rotina, n√≠vel alto escrit√≥rio"
+		312 "IIIa2 - N√£o-manual rotina, n√≠vel alto supervis√£o"
+		321 "IIIb1 - N√£o-manual rotina, n√≠vel baixo escrit√≥rio"
+		322 "IIIb2 - N√£o-manual rotina, n√≠vel baixo servi√ßos"
 		410 "IVa - Pequenos Propriet., empregadores"
 		420 "IVb - Pequenos Propriet., sem empregados"
 		430 "IVc2 - Pequenos Prop. rurais, sem empregados"
 		440 "IVc1 - Pequenos Prop. rurais, com empregados"
-		500 "V - TÈcnicos e supervisores do Trab. Manual"
+		500 "V - T√©cnicos e supervisores do Trab. Manual"
 		601 "VIa - Trabalhadores Manuais Qualif., Ind. Moderna"
 		602 "VIb - Trabalhadores Manuais Qualif., Ind. Tradicional"
-		603 "VIc - Trabalhadores Manuais Qualif., ServiÁos"
-		711 "VIIa1 - Trabalhadores Manuais N„o-qualif., Industria"
-		712 "VIIa2 - Trabalhadores Manuais N„o-qualif., ServiÁos"
-		713 "VIIa3 - Trabalhadores Manuais N„o-qualif., Serv Domest"
-		714 "VIIa4 - Trabalhadores Manuais N„o-qualif., Ambulantes"
+		603 "VIc - Trabalhadores Manuais Qualif., Servi√ßos"
+		711 "VIIa1 - Trabalhadores Manuais N√£o-qualif., Industria"
+		712 "VIIa2 - Trabalhadores Manuais N√£o-qualif., Servi√ßos"
+		713 "VIIa3 - Trabalhadores Manuais N√£o-qualif., Serv Domest"
+		714 "VIIa4 - Trabalhadores Manuais N√£o-qualif., Ambulantes"
 		720 "VIIb - Trabalhadores Manuais Rurais"
 		;
 		#delimit cr
@@ -189,7 +189,7 @@ local egp12Name	egp12
 local nvsName 	nvs
 local egpsName 	egps
 local ibge90Name ibge90
-local complabel "OcupaÁ„o principal"
+local complabel "Ocupa√ß√£o principal"
 
 * Chama o arquivo base 
 local supl 0
@@ -233,7 +233,7 @@ if "`mobilidade'" != "" & `ano'==2014 {
 	local nvsName 	nvs_ocup1
 	local egpsName 	egps_ocup1
 	local ibge90Name ibge90_ocup1
-	local complabel "Primeira ocupaÁ„o"
+	local complabel "Primeira ocupa√ß√£o"
 
 	* Esvazia locals que serao recriada para suplemento
 	local posocup 	
@@ -320,7 +320,7 @@ if "`mobilidade'" != "" & `ano'==2014 {
 	local nvsName 	nvs_mae
 	local egpsName 	egps_mae
 	local ibge90Name ibge90_mae
-	local complabel "M„e"
+	local complabel "M√£e"
 
 	* Esvazia locals que serao recriada para suplemento
 	local posocup 	
